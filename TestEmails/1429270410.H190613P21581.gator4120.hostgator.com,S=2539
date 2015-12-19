@@ -1,0 +1,65 @@
+Return-path: <Alastair.Brown@blackbay.com>
+Envelope-to: members_test@ctc.org.nz
+Delivery-date: Fri, 17 Apr 2015 06:33:30 -0500
+Received: from mail1.bemta8.messagelabs.com ([216.82.243.200]:24000)
+	by gator4120.hostgator.com with esmtps (UNKNOWN:DHE-RSA-AES256-SHA:256)
+	(Exim 4.82)
+	(envelope-from <Alastair.Brown@blackbay.com>)
+	id 1Yj4WX-0005VM-03
+	for members_test@ctc.org.nz; Fri, 17 Apr 2015 06:33:29 -0500
+Received: from [216.82.242.19] by server-8.bemta-8.messagelabs.com id 25/D4-23775-48FE0355; Fri, 17 Apr 2015 11:33:24 +0000
+X-Env-Sender: Alastair.Brown@blackbay.com
+X-Msg-Ref: server-15.tower-191.messagelabs.com!1429270400!16143403!1
+X-Originating-IP: [123.255.6.12]
+X-StarScan-Received:
+X-StarScan-Version: 6.13.6; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 729 invoked from network); 17 Apr 2015 11:33:23 -0000
+Received: from 12.6.255.123.static.snap.net.nz (HELO mail.blackbay.com) (123.255.6.12)
+  by server-15.tower-191.messagelabs.com with AES128-SHA encrypted SMTP; 17 Apr 2015 11:33:23 -0000
+Received: from EXCH2010.hgl.com ([::1]) by EXCH2010.hgl.com ([::1]) with mapi
+ id 14.01.0438.000; Fri, 17 Apr 2015 23:33:18 +1200
+From: Alastair Brown <Alastair.Brown@blackbay.com>
+To: "members_test@ctc.org.nz" <members_test@ctc.org.nz>
+Subject: Test from Outlook
+Thread-Topic: Test from Outlook
+Thread-Index: AdB5AkzqnEJG6d2KTD+WWj5gj/BPQg==
+Date: Fri, 17 Apr 2015 11:33:18 +0000
+Message-ID: <499D6378A9B68044A22E53EC3A1367E2B30C5A28@EXCH2010.hgl.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-NZ
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-originating-ip: [111.69.151.245]
+Content-Type: multipart/alternative;
+	boundary="_000_499D6378A9B68044A22E53EC3A1367E2B30C5A28EXCH2010hglcom_"
+MIME-Version: 1.0
+X-Spam-Status: No, score=1.0
+X-Spam-Score: 10
+X-Spam-Bar: +
+X-Spam-Flag: NO
+
+--_000_499D6378A9B68044A22E53EC3A1367E2B30C5A28EXCH2010hglcom_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Test from Outlook!
+
+--_000_499D6378A9B68044A22E53EC3A1367E2B30C5A28EXCH2010hglcom_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html dir=3D"ltr">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" id=3D"owaParaStyle"></style>
+</head>
+<body fpstyle=3D"1" ocsi=3D"0">
+<div style=3D"direction: ltr;font-family: Tahoma;color: #000000;font-size: =
+10pt;">Test
+<b>from </b>Outlook!</div>
+</body>
+</html>
+
+--_000_499D6378A9B68044A22E53EC3A1367E2B30C5A28EXCH2010hglcom_--

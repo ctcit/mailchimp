@@ -1,0 +1,158 @@
+<html>
+	<head>
+		<title>CTC email moderation</title>
+		<link rel="stylesheet" type="text/css" href="moderation.css">
+	</head>
+	<body>
+		<script type="text/javascript">
+			var data = $data;
+		</script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script type="text/javascript" src="/mambots/editors/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+		<script type="text/javascript" src="moderationStep2.js"></script>
+		<form  ng-app="moderationApp" id="moderationForm" ng-controller="moderationController"  method="POST" action="">
+			<input type="hidden" name="action" id="action" ng-value="data.action"/>
+			<input type="hidden" name="listid" id="listid" ng-value="data.listid"/>	
+			<input type="hidden" name="msgid" ng-value="data.msgid"/>
+			<input type="hidden" name="ctcid" ng-value="data.ctcid"/>
+			<input type="hidden" name="modid" ng-value="data.modid"/>
+			<input type="hidden" name="prevaction" ng-value="data.action"/>
+			<h2 align="center">CTC email moderation</h2>
+			<table align="center">
+				<tr ng-show="data.action == 'sending'">
+					<th>Options</th>
+				      	<td>
+				      		<button class="send action" type="button" id="send" ng-click="data.Action('send',data.listid)"
+				      			ng-attr-title="Click here to send to {{data.listname}} list">
+				      			<img src="send.png"/>Send to {{data.listname}} list
+				      				<span ng-show="!data.stop"> in 
+				      					<span style="font-weight:bold; font-size:large">{{data.config.ActionDelay}}</span> 
+				      					seconds</span></button><br/>
+				      		<button class="stop action" type="button" ng-click="data.Toggle('stop')" ng-disabled="data.stop">
+				      			<img src="stop.png"/>{{data.stop ? 'Countdown stopped' : 'Stop countdown'}}</button><br/>
+				      		<button class="edit action" type="button" ng-click="data.Action('edit')"
+				      			ng-attr-title="Click here to edit this message before sending">
+				      			<img src="edit.png"/>Edit this message before sending</button>
+				      	</td>
+				</tr>
+				<tr ng-show="data.action != 'sending'">
+					<th>Action</th>
+					<td>
+						<div ng-class="'action '+data.action"><img ng-attr-src="{{data.action}}.png"/>{{data.captionweb}}</div>
+					</td>
+				</tr>
+				<tr ng-repeat="folder in data.list">
+					<td colspan="2">
+					    <table>
+					    	<th colspan="4">{{folder.name}} Emails</th>
+						<tr>
+						    <th>Subject</th>
+						    <th>From</th>
+						    <th>Date</th>
+						    <th ng-show="folder.name == 'Moderated'">State</th>
+						</tr>
+						<tr ng-repeat="email in folder.emails">
+						    <td><a ng-href="moderationStep2.php?action=edit&msgid={{email.msgid}}&ctcid={{email.ctcid}}&modid={{data.modid}}">
+						        {{email.subject}}</a></td>
+						    <td>{{email.from}}</td>
+						    <td>{{email.date}}</td>
+						    <td ng-show="folder.name == 'Moderated'" ng-class="email.ctcaction.split(' ')[0]">
+						    	<img src="{{email.ctcaction.split(' ')[0]}}.png"/>{{email.ctcaction}}</td>
+						</tr>
+					    </table>
+					</td>
+				</tr>
+				<tbody ng-show="(data.subject || '') != ''">
+					<tr><th>Message Subject</th>
+					    <td ng-show="data.action == 'edit'"><input name="editedsubject" type="text" class="action" ng-model="data.subject"/></td>
+					    <td ng-show="data.action != 'edit'">{{data.subject}}</td>
+					</tr>
+					<tr><th>Message Body</th>
+					    <td ng-show="data.action == 'edit'"><textarea name="editedbody" id="editedbody" ng-model="data.body"></textarea></td>
+					    <td ng-show="data.action != 'edit'" id="body"></td>
+					</tr>
+					<tr><th>Options</th>
+					    <td>
+						<div ng-show="data.action == 'edit'">
+							<div ng-repeat="list in data.lists">
+					      		    <button class="send action" type="submit" ng-click="data.Action('send',list.listid)"
+					      			ng-attr-title="Click here to send to {{list.listname}} list">
+					      			<img src="send.png">Send to {{list.listname}} list</button>
+					      		</div>
+					      		<button class="discard action" type="submit" ng-click="data.Action('discard')"
+					      			ng-attr-title="Click here to discard this message">
+					      			<img src="discard.png">Discard this message</button>
+				      	        </div>
+				      	        <div ng-show="data.ctcaction.split(' ')[0] == 'discarded'">
+							<button class="undo action" type="submit" ng-click="data.Action('undo')"
+								ng-attr-title="Click here to undo the discard and edit this message">
+					      			<img src="undo.png">Undo the discard and edit this message</button>
+				      		</div>
+				      		<div>
+							<button class="list action" type="button" ng-click="data.Link('list')"
+								ng-attr-title="Click here to list all moderated and unmoderated emails">
+					      			<img src="list.png">List all moderated and unmoderated emails</button>
+					      	</div>
+				      	    </td>
+				      	</tr>
+					<tr>
+						<th>Raw</th>
+						<td><button type="button" ng-click="data.Toggle('showraw')"
+					      			ng-attr-title="Click here to show the raw message text"/>
+					      		{{data.showraw ? 'Hide' : 'Show'}}</button></td>
+					</tr>
+				<tbody>
+				<tr>
+					<th>Help</th>
+					<td><button type="button" ng-click="data.Toggle('showhelp')"
+				      			ng-attr-title="Click here to show the help"/>
+				      		{{data.showhelp ? 'Hide' : 'Show'}}</button></td>
+				</tr>
+			</table>
+			<table ng-show="data.showraw" align="center">
+				<tr ng-show="data.editedhtml"><td><h2>Edited message</h2>
+					<div id="editedhtml"></div></td></tr>
+				<tr><td><h2>Raw message text</h2>
+					<pre>{{data.raw}}</pre></td></tr>
+			</table>
+			<table ng-show="data.showhelp" align="center">
+				<tr><td>
+				    <h2>Email Moderation Process</h2>
+				    <p>The email moderation process is designed to work as follows:</p>
+				    <ol>
+					<li>An email is sent to <i>{{data.config.SrcName}}@{{data.config.SrcDomain}}</i></li>
+					<li>It arrives in the inbox folder for <i>{{data.config.SrcName}}@{{data.config.SrcDomain}}</i></li>
+					<li>The first step of the moderation process is that it a moderation email is sent all moderators<br/>
+						(CTC members who have the role of <i>{{data.config.ModeratorRoleName}}</i>
+						- set up in 
+						<a href="http://www.ctc.org.nz/db/index.php/ctc/manageRoles">http://www.ctc.org.nz/db/index.php/ctc/manageRoles</a>)</li>
+					<li>The moderation email is in this format:<br/>
+						<img src="ModerationEMail.png"/></li>
+					<li>One of the moderators will select one of the options in the email</li>
+					<li>If a "Click to send" option is selected then the moderator is presented with a screen that gives them 
+						{{data.config.ActionDelay}} seconds <br/>
+						to change that descision before the email is sent to all members on the selected list, via MailChimp.</li>
+					<li>If a "Click to edit" option is selected then the moderator can edit the message before 
+						selecting a list, or discarding the message.</li>
+					<li>If a "Click to discard" option is selected then the message is discarded, however this can be undone.</li>
+				    </ol>
+				    <p>Please note:</p>
+				    <ul>
+				    	<li>If a another moderator has already moderated the message, then the email options will appear as follows:<br/>
+				    	    <img src="ModerationAlreadySent.png"/><br/>
+				    	    or<br/>
+				    	    <img src="ModerationAlreadyDiscarded.png"/></li>
+				    	<li>If raw email data is understood it may help confirm (or otherwise) the legitimacy of an email for moderation.<br/>
+				    	    Clicking on the <img src="ModerationShow.png"/> button after the <b>Raw</b> will show the raw email data.</li>
+				    	<li>Moderated and Unmoderated messages may be viewed by clicking on 
+				    	    <img src="ModerationList.png"/>.<br/>
+					    Alternative access is via this link:<br/>
+					    <a href="{{data.config.Step2Url}}?action=list">{{data.config.Step2Url}}?action=list</a><br/>
+					    although you must be logged on to the CTC website for this to work.</li>
+				    </ul>
+				</td></tr>
+			</table>
+		</form>
+	</body>
+</html>

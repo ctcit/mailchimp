@@ -1,0 +1,19 @@
+table         {border-collapse: collapse;}
+th	      {vertical-align: top;       text-align: left; border: solid 1px black;}
+td            {vertical-align: top;       text-align: left; border: solid 1px black;}
+.action	      {width: 600px; height:26px; text-align: left;}
+textarea      {width: 600px; height:200px;}
+.actiongap    {height: 2px;}
+.actionborder {height: 2px;}
+.warning      {background: yellow;     color: black;}
+.send         {background: green;      color: white;}
+.sending      {background: green;      color: white;}
+.sent         {background: green;      color: white;}
+.edit         {background: blue;       color: white;}
+.discard      {background: red;        color: white;}
+.discarded    {background: red;        color: white;}
+.stop	      {background: red;        color: white;}
+.undo         {background: lightgray;  color: black;}
+.deleted      {background: red;        color: white;}
+.list         {background: cyan;       color: black;}
+.hidden       {display: none;}

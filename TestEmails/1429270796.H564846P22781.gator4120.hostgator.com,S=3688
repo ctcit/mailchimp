@@ -1,0 +1,52 @@
+Return-path: <alastairgbrown@yahoo.com.au>
+Envelope-to: members_test@ctc.org.nz
+Delivery-date: Fri, 17 Apr 2015 06:39:56 -0500
+Received: from nm25-vm1.bullet.mail.bf1.yahoo.com ([98.139.212.155]:44157)
+	by gator4120.hostgator.com with esmtps (TLSv1:RC4-SHA:128)
+	(Exim 4.82)
+	(envelope-from <alastairgbrown@yahoo.com.au>)
+	id 1Yj4cl-0005sw-Pm
+	for members_test@ctc.org.nz; Fri, 17 Apr 2015 06:39:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com.au; s=s2048; t=1429270794; bh=aDaXHRzygVtq8kizbo0gzQ1bKMcGFgAL1KYl629Xark=; h=Date:From:Reply-To:To:Subject:From:Subject; b=Dr6p6sn1cnKiedeDbzOmUbsafjO+Go8IYemgJsBXBNhZWi8sBHGChtCEtAqf85+m/tagYwtDF/iY3bgeoStkEpaZwyCsO2IU1q/uRO1D9w7j/EGyO92N1p6e+4r7bv4485jA4sgy2YQKNDoc5fegl5nRNGggyWyU3ZXUy9C2KxTq0MQnkLtHkt2OQAZEZoLsYrPLOMF0+9dMkDZ3TDY9dXYN3meWzHG2XBp+MEuwF94ApEfLc0S4IPzzDIj37fh0VZL0kI/SOn/x2cPCbx6lH7uXCgQ/0bHILH+W7MzMVjINeqw3WjYX421DG8Msgyzv0ZfZd7x9wCiQcSu6z4yiSQ==
+Received: from [98.139.215.141] by nm25.bullet.mail.bf1.yahoo.com with NNFMP; 17 Apr 2015 11:39:54 -0000
+Received: from [98.139.212.209] by tm12.bullet.mail.bf1.yahoo.com with NNFMP; 17 Apr 2015 11:39:54 -0000
+Received: from [127.0.0.1] by omp1018.mail.bf1.yahoo.com with NNFMP; 17 Apr 2015 11:39:54 -0000
+X-Yahoo-Newman-Property: ymail-3
+X-Yahoo-Newman-Id: 268188.42769.bm@omp1018.mail.bf1.yahoo.com
+X-YMail-OSG: 9iKQ6oYVM1ly9qY2E_BHj14lYIuZ8jAoiCrRiO7AFMok3zWZbnjZWidXviayr7G
+ KBzZCpFaTc2vjyFK2m1c6PoNvK0SMQZyr_YQn.wVLq9SQeNB2sTfxqcbw289niaDMG4kA0PeLcC1
+ FQX7jkd.WZjIJRV0.T0aBS9a10v4tCNaBIb5ztzvpSRkmClYWFegmtxoZkrQQ_GmfBEMyOGnOchi
+ _sdUuHCo.0UDFTLo9NDSWj.h98x3Y9hd1lLoDdRBdceQPxPx.hfkNk4v3TffSKDYafkKseCiAJV3
+ yi16O8Smjr.fWoj4JMqS9WcIbVTXNt1WVxd97twdUa80o89MkJ_K6rdFuShpJEf4VpEcHR6G_ttZ
+ xpwsXHSSHv0VRSd8_1tCtH0j_d1KCIeMjvR.UTM_2XnfJy_KUs5yXQNXBp8.MqCQw4uTDOAvAOSq
+ Wh6Jqy0HoEsDAHU3KIYpGire7SiIR8kZN93totSE8vckK2QHj2FtTIE6weciFtlcA1EkLq2nxsZf
+ gEK8C6JyYAn4wFaZq9A.3Gw--
+Received: by 76.13.27.133; Fri, 17 Apr 2015 11:39:53 +0000 
+Date: Fri, 17 Apr 2015 11:39:53 +0000 (UTC)
+From: Alastair Brown <alastairgbrown@yahoo.com.au>
+Reply-To: Alastair Brown <alastairgbrown@yahoo.com.au>
+To: "members_test@ctc.org.nz" <members_test@ctc.org.nz>
+Message-ID: <708296739.6119096.1429270793428.JavaMail.yahoo@mail.yahoo.com>
+Subject: Test From Yahoo
+MIME-Version: 1.0
+Content-Type: multipart/alternative; 
+	boundary="----=_Part_6119095_1788787182.1429270793425"
+Content-Length: 1199
+X-Spam-Status: No, score=0.0
+X-Spam-Score: 0
+X-Spam-Bar: /
+X-Spam-Flag: NO
+
+------=_Part_6119095_1788787182.1429270793425
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+=C2=A0Cheers/Regards/Sorry/Thanks/WhateverAlastair Brown60B Hoon Hay RdChri=
+stchurchNew Zealand+64 3 338 1324 (home) +64 3 977 7026 (work) +21 209 3559=
+ (cell)
+------=_Part_6119095_1788787182.1429270793425
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+<html><body><div style="color:#000; background-color:#fff; font-family:HelveticaNeue, Helvetica Neue, Helvetica, Arial, Lucida Grande, Sans-Serif;font-size:16px"><div id="yui_3_16_0_1_1429270769030_2421"><span></span></div><div></div><div id="yui_3_16_0_1_1429270769030_2587">&nbsp;</div><div class="signature" id="yui_3_16_0_1_1429270769030_2681"><div id="yui_3_16_0_1_1429270769030_2680">Cheers/Regards/Sorry/Thanks/Whatever</div><div id="yui_3_16_0_1_1429270769030_2682">Alastair Brown</div><div>60B Hoon Hay Rd</div><div id="yui_3_16_0_1_1429270769030_2683">Christchurch</div><div id="yui_3_16_0_1_1429270769030_2684">New Zealand</div><div>+64 3 338 1324 (home) +64 3 977 7026 (work) +21 209 3559 (cell)</div></div></div></body></html>
+------=_Part_6119095_1788787182.1429270793425--
