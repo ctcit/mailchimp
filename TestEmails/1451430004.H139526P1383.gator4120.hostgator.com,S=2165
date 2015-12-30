@@ -1,0 +1,51 @@
+Return-path: <Alastair.Brown@blackbay.com>
+Envelope-to: members_test@ctc.org.nz
+Delivery-date: Tue, 29 Dec 2015 17:00:04 -0600
+Received: from mail1.bemta8.messagelabs.com ([216.82.243.193]:23116)
+	by gator4120.hostgator.com with esmtps (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+	(Exim 4.85)
+	(envelope-from <Alastair.Brown@blackbay.com>)
+	id 1aE3FL-000Y5L-MA
+	for members_test@ctc.org.nz; Tue, 29 Dec 2015 17:00:04 -0600
+Received: from [216.82.242.38] by server-1.bemta-8.messagelabs.com id 6D/2F-21206-17013865; Tue, 29 Dec 2015 23:00:01 +0000
+X-Env-Sender: Alastair.Brown@blackbay.com
+X-Msg-Ref: server-7.tower-128.messagelabs.com!1451429999!8810954!1
+X-Originating-IP: [123.255.6.12]
+X-StarScan-Received:
+X-StarScan-Version: 7.35.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 28382 invoked from network); 29 Dec 2015 23:00:00 -0000
+Received: from 12.6.255.123.static.snap.net.nz (HELO mail.blackbay.com) (123.255.6.12)
+  by server-7.tower-128.messagelabs.com with AES128-SHA encrypted SMTP; 29 Dec 2015 23:00:00 -0000
+Received: from EXCH2010.hgl.com ([::1]) by EXCH2010.hgl.com ([::1]) with mapi
+ id 14.02.0247.003; Wed, 30 Dec 2015 11:59:57 +1300
+From: Alastair Brown <Alastair.Brown@blackbay.com>
+To: "members_test@ctc.org.nz" <members_test@ctc.org.nz>
+Subject: Plain text message
+Thread-Topic: Plain text message
+Thread-Index: AdFChdbKk2dcU5TIRf+YfgAPjqpopgABqMcz
+Date: Tue, 29 Dec 2015 22:59:56 +0000
+Message-ID: <499D6378A9B68044A22E53EC3A1367E201219EC027@EXCH2010.hgl.com>
+References: <499D6378A9B68044A22E53EC3A1367E201219E9E03@EXCH2010.hgl.com>
+In-Reply-To: <499D6378A9B68044A22E53EC3A1367E201219E9E03@EXCH2010.hgl.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-NZ
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-originating-ip: [111.69.91.255]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Spam-Status: No, score=0.3
+X-Spam-Score: 3
+X-Spam-Bar: /
+X-Spam-Flag: NO
+
+This is a Plain text message=0A=
+=0A=
+This is NOT an <HTML>=3D</HTML> message=0A=
+=0A=
+This needs to be sent with SEVEN lines of text, including THREE blank lines=
+=0A=
+=0A=
+It ends with with ONE equals sign: =3D=

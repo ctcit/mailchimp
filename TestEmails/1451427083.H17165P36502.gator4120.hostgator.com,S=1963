@@ -1,0 +1,47 @@
+Return-path: <Alastair.Brown@blackbay.com>
+Envelope-to: members_test@ctc.org.nz
+Delivery-date: Tue, 29 Dec 2015 16:11:23 -0600
+Received: from mail1.bemta8.messagelabs.com ([216.82.243.194]:40967)
+	by gator4120.hostgator.com with esmtps (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+	(Exim 4.85)
+	(envelope-from <Alastair.Brown@blackbay.com>)
+	id 1aE2UE-0009Sv-80
+	for members_test@ctc.org.nz; Tue, 29 Dec 2015 16:11:22 -0600
+Received: from [216.82.242.38] by server-2.bemta-8.messagelabs.com id 9B/50-18064-90503865; Tue, 29 Dec 2015 22:11:21 +0000
+X-Env-Sender: Alastair.Brown@blackbay.com
+X-Msg-Ref: server-10.tower-128.messagelabs.com!1451427078!8812500!1
+X-Originating-IP: [123.255.6.12]
+X-StarScan-Received:
+X-StarScan-Version: 7.35.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 69633 invoked from network); 29 Dec 2015 22:11:20 -0000
+Received: from 12.6.255.123.static.snap.net.nz (HELO mail.blackbay.com) (123.255.6.12)
+  by server-10.tower-128.messagelabs.com with AES128-SHA encrypted SMTP; 29 Dec 2015 22:11:20 -0000
+Received: from EXCH2010.hgl.com ([::1]) by EXCH2010.hgl.com ([::1]) with mapi
+ id 14.02.0247.003; Wed, 30 Dec 2015 11:11:18 +1300
+From: Alastair Brown <Alastair.Brown@blackbay.com>
+To: "members_test@ctc.org.nz" <members_test@ctc.org.nz>
+Subject: Plain text message
+Thread-Topic: Plain text message
+Thread-Index: AdFChdbKk2dcU5TIRf+YfgAPjqpopg==
+Date: Tue, 29 Dec 2015 22:11:17 +0000
+Message-ID: <499D6378A9B68044A22E53EC3A1367E201219E9E03@EXCH2010.hgl.com>
+Accept-Language: en-NZ, en-US
+Content-Language: en-NZ
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-originating-ip: [111.69.91.255]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Spam-Status: No, score=0.5
+X-Spam-Score: 5
+X-Spam-Bar: /
+X-Spam-Flag: NO
+
+=0A=
+This is a Plain text message=0A=
+=0A=
+This is NOT an <HTML></HTML> message=0A=
+=0A=
+This needs to be sent with FIVE lines of text, including TWO blank lines=
