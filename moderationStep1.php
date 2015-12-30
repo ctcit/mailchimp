@@ -6,6 +6,28 @@ require_once( '/home1/ctcweb9/public_html/includes/alastair.php' );
 require_once( '/home1/ctcweb9/public_html/mailchimp/moderation.config.php' );
 require_once( '/home1/ctcweb9/public_html/mailchimp/PlancakeEmailParser.php' );
 
+function GetHtmlFromMessage($msg) {
+
+	if ($msg->getHeader("Content-Transfer-Encoding") == "quoted-printable")	{
+		return preg_replace_callback(
+			"/=[0-9a-f][0-9a-f]|[<>&=]|\n/i",
+			function ($matches) {
+				$match = strlen($matches[0]) == 3 ? chr(hexdec($matches[0])) : $matches[0];
+				
+		        	return	($matches[0] == "=" ? "" : 
+		        		($matches[0] == "\n" ? "" : 
+		        		($match == "<" ? "&lt;" :
+		        		($match == ">" ? "&gt;" :
+		        		($match == "&" ? "&amp;" :
+		        		($match == "\n" ? "<br/>\n" : chr(hexdec($matches[0]))))))));
+		        },
+		        $msg->getPlainBody());
+        } else {
+		return preg_replace(ModerationConfig::BodyClearPattern,"",$msg->getHtmlBody());
+	}
+	
+}
+
 echo "<style>".file_get_contents(ModerationConfig::CssFile)."</style>";
 
 $dirs = array(	ModerationConfig::GetInboxDir()."/new", 
@@ -27,7 +49,7 @@ foreach ($dirs as $dir) {
 		$from = $msg->getHeader("From");
 		$subject = $msg->getHeader("Subject");
 		$ctcid = $msg->getHeader("ctc-id");
-		$body = preg_replace(ModerationConfig::BodyClearPattern,"",$msg->getHtmlBody());
+		$body = GetHtmlFromMessage($msg);
 		$css = ModerationConfig::GetCss();
 		$step2Url = ModerationConfig::Step2Url;
 			

@@ -1,12 +1,12 @@
 <?php
 class ModerationConfig
 {
-    const SrcName = "members";
+    const SrcName = "members_test";
     const SrcDomain = "ctc.org.nz";
     const MailRoot = "/home1/ctcweb9/mail/ctc.org.nz/";
     const Unmoderated = "/.Unmoderated";
     const Moderated = "/.Moderated";
-    const ModeratorRoleName = "Email Moderator";
+    const ModeratorRoleName = "Email Moderator (test)";
     const Step1Preamble = "The following message has just been received for you to moderate:";
     const Step1Url = "http://www.ctc.org.nz/mailchimp/moderationStep1.php";
     const Step2Url = "http://www.ctc.org.nz/mailchimp/moderationStep2.php";
