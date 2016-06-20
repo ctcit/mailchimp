@@ -1,13 +1,15 @@
 <?php
 
+define('JPATH_BASE', dirname(__DIR__));// Assume mailchimp at top level in website
+require_once ( JPATH_BASE.'/configuration.php' );
 
 function MailChimpRequest($method, $args=array(), $timeout = 10)
 {
-    $args['apikey'] = 'b5c9b38946982474a02c137b40a0e0e9-us8';
+    $config = new JConfig();
+    $args['apikey'] = $config->mailchimp_apikey;
     $url = "https://us8.api.mailchimp.com/2.0/$method.json";
     $json_data = json_encode($args);
-
-    $result    = file_get_contents($url, null, stream_context_create(array(
+    $stream =  stream_context_create(array(
             'http' => array(
                 'protocol_version' => 1.1,
                 'user_agent'       => 'PHP-MCAPI/2.0',
@@ -17,7 +19,8 @@ function MailChimpRequest($method, $args=array(), $timeout = 10)
                                       "Content-length: " . strlen($json_data) . "\r\n",
                 'content'          => $json_data,
            ),
-        )));
+        ));
+    $result    = file_get_contents($url, null, $stream);
 
     if ($result)
     {
@@ -38,7 +41,7 @@ function MailChimpSend($listid,$subject,$body)
         "type"    =>"regular",
         "options" =>array(
             "list_id"     => $listid,
-            "subject"     => $subject,
+            "subject"     => "[CTC] ".$subject,
             "from_email"  => "alastairgbrown@yahoo.com.au",
             "from_name"   => "Me",
             "to_name"     => "You",
@@ -115,6 +118,8 @@ function MailChimpUpdateListFromDB($con,$listid)
 {
     $list = SqlResultArray($con,"select listname from ctcweb9_ctc.mailchimp_lists where listid='$listid'");
     $listname = $list[0]["listname"];
+    //$list = MailChimpSqlResultToArray($con,"select listname from ctcweb9_ctc.mailchimp_lists where listid='$listid'");
+    //$listname = $list[0]["listname"];
 
     // Get the current state from the table
     $sql = "SELECT UCASE(primaryEmail) as K, primaryEmail as EMAIL,trim(firstName) as FNAME,trim(lastName) as LNAME, memberid, 'create' as Action

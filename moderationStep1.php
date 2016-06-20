@@ -1,10 +1,17 @@
 <?php
 
-define( '_VALID_MOS', 1 );
+//define( '_VALID_MOS', 1 );
 
-require_once( '/home1/ctcweb9/public_html/includes/alastair.php' );
-require_once( '/home1/ctcweb9/public_html/mailchimp/moderation.config.php' );
-require_once( '/home1/ctcweb9/public_html/mailchimp/PlancakeEmailParser.php' );
+//require_once( '/home1/ctcweb9/public_html/includes/alastair.php' );
+//require_once( '/home1/ctcweb9/public_html/mailchimp/moderation.config.php' );
+//require_once( '/home1/ctcweb9/public_html/mailchimp/PlancakeEmailParser.php' );
+define('_JEXEC', 1);
+require_once( 'alastair.php' );
+require_once( 'moderation.config.php' );
+require_once( 'PlancakeEmailParser.php' );
+jimport( 'joomla.mail.helper' );
+jimport( 'joomla.mail.mail' );
+
 
 function GetHtmlFromMessage($msg) {
 
@@ -27,7 +34,8 @@ function GetHtmlFromMessage($msg) {
 	}
 	
 }
-
+$config = JFactory::getConfig();
+$live_site = $config->get("live_site");
 echo "<style>".file_get_contents(ModerationConfig::CssFile)."</style>";
 
 $dirs = array(	ModerationConfig::GetInboxDir()."/new", 
@@ -51,13 +59,14 @@ foreach ($dirs as $dir) {
 		$ctcid = $msg->getHeader("ctc-id");
 		$body = GetHtmlFromMessage($msg);
 		$css = ModerationConfig::GetCss();
-		$step2Url = ModerationConfig::Step2Url;
+		$step2Url = $live_site."/".ModerationConfig::Step2Url;
+        $step2ImageUrl = $live_site."/".ModerationConfig::Step2DirectUrl;
 			
 		$lists = SqlResultArray($con, "select listid, listname from ctcweb9_ctc.mailchimp_lists");
 		$headers = "MIME-Version: 1.0\r\n".
 			   "Content-type: text/html;charset=UTF-8\r\n".
 			   "From: <".ModerationConfig::SrcName."@".ModerationConfig::SrcDomain.">\r\n";
-		
+		$sender = ModerationConfig::SrcName."@".ModerationConfig::SrcDomain;
 		echo "	<table>
 			<tr><th>msgid</th><td>$msgid</td>
 			<tr><th>ctcid</th><td>$ctcid</td>
@@ -88,22 +97,41 @@ foreach ($dirs as $dir) {
 				$args = array("action" => "sending", "msgid" => $msgid, "ctcid" => $ctcid, "modid" => $modid, "listid" => $list["listid"]);
 				$title = "Click to send to the ".$list["listname"]." list";
 				$modbody .= "<a href='$step2Url?".http_build_query($args)."'>
-				                  <img src='$step2Url?img=1&".http_build_query($args)."' $props title='".htmlentities($title)."'/></a><br/>";
+				                  <img src='$step2ImageUrl?img=1&".http_build_query($args)."' $props title='".htmlentities($title)."'/></a><br/>";
 			}
 			
 			$args = array("action" => "edit", "msgid" => $msgid, "ctcid" => $ctcid, "modid" => $modid);
 			$title = "Click to edit before sending";
 			$modbody .= "<a href='$step2Url?".http_build_query($args)."'>
-			                  <img src='$step2Url?img=1&".http_build_query($args)."' $props title='".htmlentities($title)."'/></a><br/>";
+			                  <img src='$step2ImageUrl?img=1&".http_build_query($args)."' $props title='".htmlentities($title)."'/></a><br/>";
 			$args = array("action" => "discard", "msgid" => $msgid, "ctcid" => $ctcid, "modid" => $modid);
 			$title = "Click to discard";
 			$modbody .= "<a href='$step2Url?".http_build_query($args)."'>
-			                  <img src='$step2Url?img=1&".http_build_query($args)."' $props title='".htmlentities($title)."'/></a><br/>";
+			                  <img src='$step2ImageUrl?img=1&".http_build_query($args)."' $props title='".htmlentities($title)."'/></a><br/>";
 			$modbody .= "		</td></tr>
 					</table>";
 		
 			if (ModerationConfig::Step1SendEnabled) {
-				$result = mail($modemail, ModerationConfig::Step1SubjectPrefix.$subject, $modbody, $headers);
+
+                # Invoke JMail Class
+                $mailer = JFactory::getMailer();
+
+                # Set sender array so that my name will show up neatly in your inbox
+                $mailer->setSender($sender);
+
+                # Add a recipient -- this can be a single address (string) or an array of addresses
+                $mailer->addRecipient($modemail);
+
+                $mailer->isHtml(true);
+                $mailer->setBody($modbody);
+                $mailer->setSubject(ModerationConfig::Step1SubjectPrefix.$subject);
+
+
+                # Send once you have set all of your options
+                $result = $mailer->send();
+
+                
+				//$result = mail($modemail, ModerationConfig::Step1SubjectPrefix.$subject, $modbody, $headers);
 			} else {
 				$result = "Send Disabled";
 			}

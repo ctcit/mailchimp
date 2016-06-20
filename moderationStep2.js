@@ -10,7 +10,7 @@ data.Action = function Action(action, listid) {
 }
 
 data.Link = function Link(action) {
-	window.location = "moderationStep2.php?action="+action+"&msgid="+data.msgid+"&ctcid="+data.ctcid+"&modid="+data.modid;
+	window.location = data.formaction + "?action="+action+"&msgid="+data.msgid+"&ctcid="+data.ctcid+"&modid="+data.modid;
 	return false;
 }
 
@@ -29,19 +29,19 @@ data.Countdown = function Countdown() {
 
 var app = angular.module("moderationApp", []);
 app.controller("moderationController", function($scope,$timeout) {
-	data.$scope = $scope;
+        data.$scope = $scope;
     	data.$timeout = $timeout;
     	data.$scope.data = data;
     	
     	window.document.title = data.captionweb;
     	$("#body").html(data.body);
     	$("#editedhtml").html(data.editedhtml);
-    	$("#moderationForm").attr("action",data.config.Step2Url);
+    	$("#moderationForm").attr("action",data.formaction);
     	
 	if (data.action == "sending") {
 		data.Countdown();
 	}
 	
-	tinyMCE.init({mode : "textareas", theme : "simple"});
+	//tinyMCE.init({mode : "textareas", theme : "simple"});
 	
 });		

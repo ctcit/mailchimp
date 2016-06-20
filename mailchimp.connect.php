@@ -1,18 +1,19 @@
 <?php
 
-require_once( '../globals.php' );
-require_once( '../configuration.php' );
-require_once( '../includes/joomla.php' );
-require_once( '../includes/sef.php' );
+define('_JEXEC', 1);
+define('JPATH_BASE', dirname(__DIR__));// Assume mailchimp at top level in website
+require_once ( JPATH_BASE.'/includes/defines.php' );
+require_once ( JPATH_BASE.'/includes/framework.php' );
+require_once('alastair.php');
 require_once( 'mailchimp.inc.php' );
 
+$app = JFactory::getApplication('site');
+$user = JFactory::getUser();
+$config = JFactory::getConfig();
 
-// mainframe is an API workhorse, lots of 'core' interaction routines
-$mainframe = new mosMainFrame( $database, '', '.' );
-$mainframe->initSession();
-$userobj	= $mainframe->getUser();
-$username	= $userobj->username;
-$userrow 	= MailChimpSqlResultToArray($con,"SELECT primaryEmail,firstName,lastName FROM ctcweb9_ctc.view_members where loginname = '$username' ");
+
+$username = $user->username;
+$userrow 	= SqlResultArray($con,"SELECT primaryEmail,firstName,lastName FROM ctcweb9_ctc.view_members where loginname = '$username' ");
 if (count($userrow))
 {
 	$userid = $userobj->id;
@@ -22,7 +23,8 @@ if (count($userrow))
 }
 else
 {
-	echo "<script>window.location.replace('http://www.ctc.org.nz');</script>";
+    $url = $config->get('live_site');
+	echo "<script>window.location.replace('$url');</script>";
 	die('not logged on');
 }
     

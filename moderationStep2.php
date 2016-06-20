@@ -1,13 +1,12 @@
 <?php
-
-define( '_VALID_MOS', 1 );
-
-require_once( '/home1/ctcweb9/public_html/includes/alastair.php' );
-require_once( '/home1/ctcweb9/public_html/mailchimp/moderation.config.php' );
-require_once( '/home1/ctcweb9/public_html/mailchimp/PlancakeEmailParser.php' );
-require_once( '/home1/ctcweb9/public_html/mailchimp/mailchimp.inc.php' );
+define('_JEXEC', 1);
+require_once( 'alastair.php' );
+require_once( 'moderation.config.php' );
+require_once( 'PlancakeEmailParser.php' );
+require_once( 'mailchimp.inc.php' );
 
 $getpost =  $_GET["action"] == null ? $_POST : $_GET;
+//var_dump($getpost);
 $isImg = intval($getpost["img"]) == 1;
 $action = strval($getpost["action"]);
 $prevaction = strval($getpost["prevaction"]);
@@ -17,19 +16,23 @@ $modid = strval($getpost["modid"]);
 $listid = strval($getpost["listid"]);
 $editedsubject = strval($getpost["editedsubject"]);
 $editedbody = strval($getpost["editedbody"]);
+if (!$isImg)
+    // Do this now before anything gets changed
+    GetLogonDetails($con,$username, $params, "role = ".SqlVal(ModerationConfig::ModeratorRoleName));
 
-$files = array_merge(	glob(ModerationConfig::GetUnmoderatedDir()."/cur/$msgid,*"),
-			glob(ModerationConfig::GetModeratedDir()."/cur/$msgid,*"));
+$unmoderateddir = ModerationConfig::GetUnmoderatedDir()."/cur/$msgid,*";
+$moderateddir = ModerationConfig::GetModeratedDir()."/cur/$msgid,*";
+$files = array_merge(glob($unmoderateddir), glob($moderateddir));
 $location = (count($files) == 0 ? null :
 	    (strpos($files[0],ModerationConfig::GetUnmoderatedDir()) === 0 ? "unmoderated" :
 	    (strpos($files[0],ModerationConfig::GetModeratedDir()) === 0 ? "moderated" : null)));
-	   
 if ($location != null) {
 	$raw = file_get_contents($files[0]);
 	$msg = new PlancakeEmailParser($raw);
+    //var_dump($ctcid, $msg);
 	$ctcaction = $msg->getHeader("ctc-action");
 	$msg = $msg == null || $ctcid != $msg->getHeader("ctc-id") ? null : $msg;
-}
+ }
 
 if ($listid != "") {
 	$query = SqlResultArray($con, "select listname from ctcweb9_ctc.mailchimp_lists where listid = '$listid'");
@@ -39,31 +42,37 @@ if ($listid != "") {
 $subject   = $msg == null || $prevaction == "edit" ? $editedsubject : $msg->getHeader("Subject") ;
 $body      = $msg == null || $prevaction == "edit" ? $editedbody    : $msg->getHtmlBody();
 $body      = preg_replace(ModerationConfig::BodyClearPattern,"",$body);
-
 if ($action == "list") {
 	$captionimg = $captionweb = "List the emails";
 	$subject = $body = $msgid = $raw = $ctcaction = "";
-	
+	$list = array();
 	if (!$isImg) {
-		$list = array(array("name"=>"Unmoderated","folder" => ModerationConfig::GetUnmoderatedDir()."/cur"),
+		$templist = array(array("name"=>"Unmoderated","folder" => ModerationConfig::GetUnmoderatedDir()."/cur"),
 			      array("name"=>"Moderated",  "folder" => ModerationConfig::GetModeratedDir()."/cur"));
-		foreach ($list as &$folder) {
+		foreach ($templist as &$folder) {
 			$files = scandir($folder["folder"]);
+            $count = 0;
 			foreach ($files as $file) {
 				if (is_dir("$folder[folder]/$file") || preg_match("/\.edited\.html$/",$file)) {
 					continue;
 				}
+                $count++;
 				$raw = file_get_contents("$folder[folder]/$file");
 				$msg = new PlancakeEmailParser($raw);
+				$classname = explode(" ",$msg->getHeader("ctc-action"));
 				$folder["emails"] []= array(
 					"msgid" => preg_replace('/,.*$/',"",$file),
 					"ctcid" => $msg->getHeader("ctc-id"),
 					"ctcaction" => $msg->getHeader("ctc-action"),
+					"classname" => ($classname[0] == "NOT" || $classname[0] == "" ? "warning" : $classname[0]), //blank classname happens sometimes after stuffup
 					"subject" => $msg->getHeader("Subject"),
 					"from" => $msg->getHeader("From"),
 					"date" => $msg->getHeader("Date"));
 			}
-			unset($folder["folder"]);
+            if ($count !== 0){
+			  unset($folder["folder"]);
+              $list[] = $folder;
+            }
 		}
 	}
 } else if ($msg == null) {
@@ -91,6 +100,7 @@ if ($action == "list") {
 	$captionweb = "This message has just been $ctcaction";
 
 	if (!$isImg) {
+        // Add ctcaction to the message
 		$raw = "ctc-action: $ctcaction\n$raw";
 		file_put_contents(ModerationConfig::GetModeratedDir()."/cur/$msgid,S=".strlen($raw),$raw);
 		unlink($files[0]);
@@ -102,8 +112,8 @@ if ($action == "list") {
 } else if ($location == "unmoderated" && $action == "edit") {
 	$captionimg = "Click to edit before sending or discarding";
 	$captionweb = "Edit before sending or discarding";
-} else if ($location == "moderated" && $action == "undo") {
-
+} else if ($location == "moderated" && ($action == "undo" || $action = "retry")) {
+    // remove ctcaction from message
 	$raw = str_replace("ctc-action: $ctcaction\n","",$raw);
 
 	file_put_contents(ModerationConfig::GetUnmoderatedDir()."/cur/$msgid,S=".strlen($raw),$raw);
@@ -118,9 +128,7 @@ if ($action == "list") {
 	$captionimg = "Already $ctcaction";
 	$captionweb = "Already $ctcaction";
 }
-
-if ($isImg)
-{
+if ($isImg){
 	$css = ModerationConfig::GetCss();
 	$actionSizeX = $css[".action"]["width"];
 	$actionSizeY = $css[".action"]["height"];
@@ -152,11 +160,9 @@ if ($isImg)
 	imagedestroy($image);
 	imagedestroy($icon);
 } else {
-	GetLogonDetails($con,$username,
-			"action=$action&ctcid=$ctcid&msgid=$msgid&modid=$modid&redirect=mailchimp/moderationStep2.php",
-			"role = ".SqlVal(ModerationConfig::ModeratorRoleName));
-
-	$config = new ReflectionClass("ModerationConfig");
+    $config = JFactory::getConfig();
+    $step2Url = $config->get('live_site')."/".ModerationConfig::Step2DirectUrl;
+	$moderationconfig = new ReflectionClass("ModerationConfig");
 	$data = array(	"action" => $action,
 			"ctcid" => $ctcid,
 			"msgid" => $msgid,
@@ -170,9 +176,10 @@ if ($isImg)
 			"listname" => $listname,
 			"captionweb" => $captionweb,
 			"formaction" => $step2Url,
+            "livesite"=> $config->get('live_site'),
 			"editedhtml" => @file_get_contents("$moderated/cur/$msgid.edited.html"),
-			"config" => $config->getConstants(),
+			"config" => $moderationconfig->getConstants(),
 			"raw" => $raw);
-	echo str_replace('$data',json_encode($data),file_get_contents("/home1/ctcweb9/public_html/mailchimp/moderationStep2.html"));
+	echo str_replace('$data',json_encode($data),file_get_contents("moderationStep2.html"));
 }
 ?> 

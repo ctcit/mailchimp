@@ -1,6 +1,6 @@
 <?php
 // Set flag that this is a parent file
-define( '_VALID_MOS', 1 );
+define('_JEXEC', 1);
 
 require_once( 'mailchimp.connect.php' );
 
@@ -18,7 +18,7 @@ if ($_POST['send'] == 'Send')
 <html>
 	<head>
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script type="text/javascript" src="/mambots/editors/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+		<script type="text/javascript" src="../media/editors/tinymce/tinymce.min.js"></script>
 		<script type="text/javascript">
 			tinyMCE.init({
 				mode : "textareas",
