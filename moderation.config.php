@@ -10,7 +10,7 @@ class ModerationConfig
     const Step1Preamble = "The following message has just been received for you to moderate:";
     const Step1Url = "mailchimp/moderationStep1.php"; // Add root later
     const Step2Url = "index.php/mail-chimp";
-    const Step2DirectUrl = "mailchimp/moderationstep2.php";
+    const Step2DirectUrl = "mailchimp/moderationStep2.php";
     const Step1SubjectPrefix = "[CTC-for-moderation] ";
     const Step2SubjectPrefix = "[CTC] ";
     const Step1SendEnabled = true;
