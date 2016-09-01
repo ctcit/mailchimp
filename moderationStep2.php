@@ -16,6 +16,8 @@ $modid = strval($getpost["modid"]);
 $listid = strval($getpost["listid"]);
 $editedsubject = strval($getpost["editedsubject"]);
 $editedbody = strval($getpost["editedbody"]);
+$editedfrom = strval($getpost["editedfrom"]);
+
 if (!$isImg)
     // Do this now before anything gets changed
     GetLogonDetails($con,$username, $params, "role = ".SqlVal(ModerationConfig::ModeratorRoleName));
@@ -42,6 +44,8 @@ if ($listid != "") {
 $subject   = $msg == null || $prevaction == "edit" ? $editedsubject : $msg->getHeader("Subject") ;
 $body      = $msg == null || $prevaction == "edit" ? $editedbody    : $msg->getHtmlBody();
 $body      = preg_replace(ModerationConfig::BodyClearPattern,"",$body);
+$from      = $msg == null || $prevaction == "edit" ? $editedfrom    : $msg->getHeader("From");
+
 if ($action == "list") {
 	$captionimg = $captionweb = "List the emails";
 	$subject = $body = $msgid = $raw = $ctcaction = "";
@@ -90,7 +94,7 @@ if ($action == "list") {
 		$captionimg = "Click to discard this message";
 	} else if (!ModerationConfig::Step2SendEnabled) {
 		$ctcaction = "sent to $listname by $modname (disabled)";
-	} else if (MailChimpSend($listid, $step2SubjectPrefix.$subject, $body) === false) {
+	} else if (MailChimpSend($listid, $step2SubjectPrefix.$subject, $body, $from, $from, "You") === false) {
 		$ctcaction = "NOT sent to $listname by $modname - API call failed";
 		$action = "warning";
 	} else {

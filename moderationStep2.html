@@ -71,6 +71,10 @@
 					    <td ng-show="data.action == 'edit'"><input name="editedsubject" type="text" class="action" ng-model="data.subject"/></td>
 					    <td ng-show="data.action != 'edit'">{{data.subject}}</td>
 					</tr>
+					<tr><th>Message from</th>
+					    <td ng-show="data.action == 'edit'"><input name="editedfrom" type="text" class="action" ng-model="data.from"/></td>
+					    <td ng-show="data.action != 'edit'">{{data.from}}</td>
+					</tr>
 					<tr><th>Message Body</th>
 					    <td ng-show="data.action == 'edit'"><textarea name="editedbody" ng-model="data.body" ckeditor></textarea></td>
 					    <td ng-show="data.action != 'edit'" id="body"></td>

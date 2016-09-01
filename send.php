@@ -11,7 +11,7 @@ $result  = 'Not yet sent';
 
 if ($_POST['send'] == 'Send')
 {
-	$result = MailChimpSend($listid,$subject,$body);
+	$result = MailChimpSend($listid,$subject,$body,"noreply@ctc.org.nz","noreply@ctc.org.nz","You");
 }
 
 ?>

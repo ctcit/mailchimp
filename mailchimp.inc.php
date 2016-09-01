@@ -34,17 +34,17 @@ function MailChimpRequest($method, $args=array(), $timeout = 10)
 }
 
 // creates and sends a campaign using the given list
-function MailChimpSend($listid,$subject,$body)
+function MailChimpSend($listid,$subject,$body,$from_email,$from_name,$to_name)
 {
     $templates = MailChimpRequest("templates/list");
     $args = array(
         "type"    =>"regular",
         "options" =>array(
             "list_id"     => $listid,
-            "subject"     => "[CTC] ".$subject,
-            "from_email"  => "alastairgbrown@yahoo.com.au",
-            "from_name"   => "Me",
-            "to_name"     => "You",
+            "subject"     => $subject,
+            "from_email"  => $from_email,
+            "from_name"   => $from_name,
+            "to_name"     => $to_name,
             "template_id" => $templates['user'][0]['id']
             ),
         "content" =>array(
