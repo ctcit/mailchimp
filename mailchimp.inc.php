@@ -3,40 +3,48 @@
 define('JPATH_BASE', dirname(__DIR__));// Assume mailchimp at top level in website
 require_once ( JPATH_BASE.'/configuration.php' );
 
-function MailChimpRequest($method, $args=array(), $timeout = 10)
+function MailChimpRequest($method, $url, $data = null, $audit = null, $verbose = false)
 {
     $config = new JConfig();
-    $args['apikey'] = $config->mailchimp_apikey;
-    $url = "https://us8.api.mailchimp.com/2.0/$method.json";
-    $json_data = json_encode($args);
-    $stream =  stream_context_create(array(
-            'http' => array(
-                'protocol_version' => 1.1,
-                'user_agent'       => 'PHP-MCAPI/2.0',
-                'method'           => 'POST',
-                'header'           => "Content-type: application/json\r\n".
-                                      "Connection: close\r\n" .
-                                      "Content-length: " . strlen($json_data) . "\r\n",
-                'content'          => $json_data,
-           ),
-        ));
-    $result    = file_get_contents($url, null, $stream);
+	$completeurl = "https://us8.api.mailchimp.com/3.0/$url";
+    $streamdata =  array(
+            "http" => array(
+                "protocol_version" => 1.1,
+                "method"           => $method,
+                "header"           => "Authorization: apikey ".$config->mailchimp_apikey."\r\n".
+									  "Connection: close\r\n"));
 
-    if ($result)
-    {
-        return json_decode($result, true);
-    }
-    else
-    {
-        echo "MailChimpRequest failed, json_data:<br>$json_data<br>";
-        return false;
-    }
+	if ($data != null) {
+		$contenttype = $method == "PATCH" ? "application/json-patch+json" : "application/json";
+		$json_data = json_encode($data);
+		$streamdata["http"]["header"] .= "Content-type: $contenttype\r\n".
+										 "Content-length: " . strlen($json_data) . "\r\n".
+										 "Connection: close\r\n";
+		$streamdata["http"]["content"] = $json_data;
+	}
+
+	$stream = stream_context_create($streamdata);
+	if ($verbose) {
+	    $result = file_get_contents($completeurl, null, $stream);
+	} else {
+		$result = @file_get_contents($completeurl, null, $stream);
+	}
+
+    if ($result) {
+		return json_decode($result, true);
+	}
+
+	if ($verbose) {
+		echo "MailChimpRequest failed, method:<b>$method</b> completeurl:<b>$completeurl</b> info:<b>$audit</b> data:<b>$json_data</b> http_response_header:<b>".json_encode($http_response_header)."</b> result:<b>".json_encode($result)."</b>";
+	}
+    
+	return false;
 }
 
 // creates and sends a campaign using the given list
 function MailChimpSend($listid,$subject,$body,$from_email,$from_name,$to_name)
 {
-    $templates = MailChimpRequest("templates/list");
+    $templates = MailChimpRequest("GET","templates?type=user",null,"MailChimpSend");
     $args = array(
         "type"    =>"regular",
         "options" =>array(
@@ -45,15 +53,21 @@ function MailChimpSend($listid,$subject,$body,$from_email,$from_name,$to_name)
             "from_email"  => $from_email,
             "from_name"   => $from_name,
             "to_name"     => $to_name,
-            "template_id" => $templates['user'][0]['id']
+            "template_id" => $templates['templates'][0]['id']
             ),
         "content" =>array(
             "sections" => Array("body" => $body)
             )
         );
 
-    return ($result = MailChimpRequest("campaigns/create",$args)) &&
-        MailChimpRequest("campaigns/send",array("cid"=>$result['id']));
+	$campaign = MailChimpRequest("POST","campaigns",$args,"MailChimpSend");
+
+	if (!$campaign)
+	{
+		return $campaign;
+	}
+
+    return MailChimpRequest("POST","campaigns/send/".$campaign['id']."/actions/send",null,"MailChimpSend");
 }
 
 // updates the 'Members' list from the ctcweb9_ctc.phplist_listuser view
@@ -76,11 +90,10 @@ function MailChimpResetSubscription($con)
 // this updates the ctcweb9_ctc.mailchimp_lists table from the list of lists from mailchimp
 function MailChimpUpdateLists($con)
 {
-    $lists = MailChimpRequest("lists/list");
+    $lists = MailChimpRequest("GET","lists?fields=lists.id,lists.name",null,"MailChimpUpdateLists");
     $listids = array();
 
-    foreach ($lists['data'] as &$list)
-    {
+    foreach ($lists['data'] as &$list) {
         $id = $list['id'];
         $name = SqlVal($list['name']);
         $listids []= "'$id'";
@@ -91,10 +104,12 @@ function MailChimpUpdateLists($con)
 
     }
 
-    $listids = implode(",",$listids);
+	if (count($listids) > 0) {
+		$listids = implode(",",$listids);
 
-    SqlExecOrDie($con,"delete from ctcweb9_ctc.mailchimp_subscriptions where listid not in ( $listids )");
-    SqlExecOrDie($con,"delete from ctcweb9_ctc.mailchimp_lists         where listid not in ( $listids )");
+		SqlExecOrDie($con,"delete from ctcweb9_ctc.mailchimp_subscriptions where listid not in ( $listids )");
+		SqlExecOrDie($con,"delete from ctcweb9_ctc.mailchimp_lists         where listid not in ( $listids )");
+	}
 }
 
 function MailChimpUpdateListsFromDB($con)
@@ -102,8 +117,7 @@ function MailChimpUpdateListsFromDB($con)
     $list = SqlResultArray($con, "select listid, listname from ctcweb9_ctc.mailchimp_lists");
     $changed = array();
 
-    foreach ($list as $item)
-    {
+    foreach ($list as $item) {
         $id = $item["listid"];
         $name = $item["listname"];
         $changed = array_merge($changed, MailChimpUpdateListFromDB($con,$id));
@@ -118,98 +132,93 @@ function MailChimpUpdateListFromDB($con,$listid)
 {
     $list = SqlResultArray($con,"select listname from ctcweb9_ctc.mailchimp_lists where listid='$listid'");
     $listname = $list[0]["listname"];
-    //$list = MailChimpSqlResultToArray($con,"select listname from ctcweb9_ctc.mailchimp_lists where listid='$listid'");
-    //$listname = $list[0]["listname"];
 
     // Get the current state from the table
-    $sql = "SELECT UCASE(primaryEmail) as K, primaryEmail as EMAIL,trim(firstName) as FNAME,trim(lastName) as LNAME, memberid, 'create' as Action
+    $sql = "SELECT primaryEmail as email_address,
+					trim(firstName) as FNAME,
+					trim(lastName) as LNAME, 
+					'Create' as `Create`,
+					'' as `Update`,
+					'' as `Subscribe`,
+					UCASE(primaryEmail) as `Key`					
             from ctcweb9_ctc.members m
             join ctcweb9_ctc.mailchimp_subscriptions ms on ms.memberid = m.id
             where listid='$listid' and primaryEmail != '' and not (primaryEmail is null)
             order by primaryEmail";
-    $list = SqlResultArray($con,$sql,"K");
+    $members = SqlResultArray($con,$sql,"Key");
     $changed = array();
 
-    $changed []= "listname=$listname listid=$listid sql returned ".count($list)." items";
+    $changed []= "listname='$listname' listid='$listid' sql returned ".count($members)." items";
 
     // Get the current state from MailChimp
-    for ($start = 0;;$start++)
-    {
-        $data = MailChimpRequest("lists/members",array("id"=>$listid,"opts"=>array("start"=>$start,"limit"=>50)));
+	for ($offset = 1, $count = 10; ; $offset += $count)	{
+		$geturl = "lists/$listid/members?fields=members.id,members.status,members.email_address,members.merge_fields&count=$count&offset=$offset";
+		$mailchimpmembers = MailChimpRequest("GET", $geturl, null, "MailChimpUpdateListFromDB get members");
+		$changed []= "$geturl returned ".count($mailchimpmembers["members"])." items";
 
-        $changed []= "lists/members listname=$listname listid=$listid start=$start returned ".count($data["data"])." items";
+		foreach ($mailchimpmembers["members"] as $member) {
+			$id = $member["id"];
+			$status = $member["status"];
+			$email = $member["email_address"];
+			$fname = $member["merge_fields"]["FNAME"];
+			$lname = $member["merge_fields"]["LNAME"];
+			$key = strtoupper($email);
 
-        if (count($data["data"]) == 0)
-        {
-            break;
-        }
+			if (!array_key_exists($key,$members)) {
+				$members[$key] = array("email"=>$email);
+				$members[$key]["Create"] = "";
+				$members[$key]["Update"] = "";
+				$members[$key]["Subscribe"] = $status == "subscribed" ? "unsubscribed" : "";
+			} else  {
+				$members[$key]["Create"] = "";
+				$members[$key]["Update"] = $members[$key]["FNAME"] == $fname && $members[$key]["LNAME"] == $lname ? "" : "Update";
+				$members[$key]["Subscribe"] = ($status == "subscribed" || $status == "pending") ? "" : "pending";
+			}
 
-        foreach ($data["data"] as $member)
-        {
-            $email = $member["merges"]["EMAIL"];
-            $fname = $member["merges"]["FNAME"];
-            $lname = $member["merges"]["LNAME"];
-            $key = strtoupper($email);
+			$members[$key]["id"] = $id;
+			$members[$key]["status"] = $status;
+		}
 
-            if (!array_key_exists($key,$list))
-            {
-                $list[$key] = $member["merges"];
-                $list[$key]["Action"] = "delete";
-            }
-            else if ($list[$key]["FNAME"] == $fname && $list[$key]["LNAME"] == $lname)
-            {
-                $list[$key]["Action"] = "ignore";
-            }
-            else
-            {
-                $list[$key]["Action"] = "update";
-                $list[$key]["old"] = "$fname $lname";
-            }
-        }
-    }
-
-    $actions = array();
+		if (count($mailchimpmembers["members"]) < $count){
+			break;
+		}
+	}
 
     // Generate subscribe or unsubscribe actions as necessary
-    foreach ($list as $item)
-    {
-        $email = $item["EMAIL"];
-        $fname = $item["FNAME"];
-        $lname = $item["LNAME"];
+    foreach ($members as $member) {
+        $email = $member["email_address"];
+        $fname = $member["FNAME"];
+        $lname = $member["LNAME"];
+		$memberid = $member["id"];
 
-        $changed []= json_encode($item);
+        $changed []= $member;
 
-        if ($item["Action"] == 'delete' || $item["Action"] == 'update')
-        {
-            $changed []= "remove $email from $listname";
-            $actions []= array("method" => "lists/unsubscribe",
-                       "args"   => array("id" => $listid,
-                                 "email" => array("email"=>$email),
-                                 "delete_member" => true,
-                                 "send_goodbye" => false,
-                                 "send_notify" => false));
+        if ($member["Create"] != "") {
+			$audit = "create $email $fname $lname";
+			$data = array(	"email_address" => $email,
+							"status"		=> "subscribed",
+							"merge_fields"	=> array("FNAME" => $fname, "LNAME"	=> $lname));
+            $changed []= $audit;
+            $changed []= MailChimpRequest("POST","lists/$listid/members",$data,$audit);
         }
 
-        if ($item["Action"] == 'create' || $item["Action"] == 'update')
-        {
-            $changed []= "add $email to $listname";
-            $actions []= array("method" => "lists/subscribe",
-                       "args"   => array("id" => $listid,
-                                         "email" => array("email"=>$email),
-                                         "merge_vars" => array("FNAME"=>$fname,"LNAME"=>$lname),
-                                         "double_optin" => false,
-                                         "update_existing" => true));
+        if ($member["Update"] != "") {
+			$audit = "update $email $fname $lname";
+			$data = array("merge_fields"=> array("FNAME" => $fname, "LNAME"	=> $lname));
+            $changed []= $audit;
+            $changed []= MailChimpRequest("PATCH","lists/$listid/members/$memberid",$data,$audit);
+        }
+
+        if ($member["Subscribe"] != "") {
+			$audit = $member["Subscribe"]." $email $fname $lname";
+			$data = array("status" => $member["Subscribe"]);
+            $changed []= $audit;
+            $changed []= MailChimpRequest("PATCH", "lists/$listid/members/$memberid",$data,$audit);
         }
     }
 
     // Send all the actions to Mailchimp
-    foreach ($actions as $action)
-    {
-        MailChimpRequest($action["method"],$action["args"]);
-    }
-
     return $changed;
 }
-
 
 ?>
