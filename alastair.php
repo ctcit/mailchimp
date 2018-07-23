@@ -8,7 +8,7 @@ $user = JFactory::getUser();
 $config = JFactory::getConfig();
 
 
-$con        = mysql_connect("localhost",   $config->get("user"), $config->get("password"));
+$con        = mysqli_connect($config->get("host"),   $config->get("user"), $config->get("password"));
 $username   = array("id"=>$user->id,"name"=>$user->username);
 
 if (!$con)
@@ -77,21 +77,21 @@ function SqlVal($value) {
 
 function SqlResultArray($con,$sql,$keycol='')
 {
-    $cursor = mysql_query($sql,$con);
+    $cursor = mysqli_query($con, $sql);
 
     if (!$cursor) {
-        die("Invalid query: ".mysql_error($con)."\n$sql");
+        die("Invalid query: ".mysqli_error($con)."\n$sql");
     }
 
     $array = array();
-    while (($row = mysql_fetch_array($cursor,MYSQL_ASSOC))) {
+    while (($row = mysqli_fetch_array($cursor,MYSQLI_ASSOC))) {
         if ($keycol == '') {
             $array []= $row;
         } else {
             $array[$row[$keycol]] = $row;
         }
     }
-    mysql_free_result($cursor);
+    mysqli_free_result($cursor);
     return $array;
 }
 
@@ -105,11 +105,11 @@ function SqlResultScalar($con,$sql)
 
 function SqlExecOrDie($con,$sql)
 {
-    if (!mysql_query($sql,$con)) {
-        die("Invalid query: ".mysql_error($con)."\n$sql");
+    if (!mysqli_query($con, $sql)) {
+        die("Invalid query: ".mysqli_error($con)."\nQuery: $sql");
     }
 
-    return mysql_affected_rows($con);
+    return mysqli_affected_rows($con);
 }
 
 class Colors {
