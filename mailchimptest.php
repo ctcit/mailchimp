@@ -16,7 +16,7 @@
 	else if ($_POST['send'] == 'MailChimpUpdateLists')
 	{
 		MailChimpUpdateLists($con);
-		$result = json_encode(MailChimpSqlResultToArray($con,'select * from ctcweb9_ctc.mailchimp_lists'));
+		$result = json_encode(MailChimpSqlResultToArray($con,'select * from ctc.mailchimp_lists'));
 	}
 	else if ($_POST['send'] == 'MailChimpResetSubscription')
 	{

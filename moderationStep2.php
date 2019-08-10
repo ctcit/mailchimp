@@ -37,7 +37,7 @@ if ($location != null) {
  }
 
 if ($listid != "") {
-	$query = SqlResultArray($con, "select listname from ctcweb9_ctc.mailchimp_lists where listid = '$listid'");
+	$query = SqlResultArray($con, "select listname from ctc.mailchimp_lists where listid = '$listid'");
 	$listname = $query[0]["listname"];
 }
 
@@ -86,7 +86,7 @@ if ($action == "list") {
 } else if ($location == "unmoderated" && $action == "sending") {
 	$captionimg = "Click to send to the $listname list";
 } else if ($location == "unmoderated" && ($action == "discard" || $action == "send")) {
-	$query = SqlResultArray($con, "select firstname, lastname from ctcweb9_ctc.members where id = $modid");
+	$query = SqlResultArray($con, "select firstname, lastname from ctc.members where id = $modid");
 	$modname = $query[0]["firstname"]." ".$query[0]["lastname"];
 	
 	if ($action == "discard") {
@@ -175,7 +175,7 @@ if ($isImg){
 			"subject" => $subject,
 			"body" => $body,
 			"list" => $list,
-			"lists" => $action == "edit" ? SqlResultArray($con, "select listid, listname from ctcweb9_ctc.mailchimp_lists") : null,
+			"lists" => $action == "edit" ? SqlResultArray($con, "select listid, listname from ctc.mailchimp_lists") : null,
 			"listid" => $listid,
 			"listname" => $listname,
 			"captionweb" => $captionweb,

@@ -14,14 +14,14 @@ if ($_POST['update'] == 'Update') {
 		}
 	}
 	echo "$userid ".join(",",$listids)."<br>";
-	$sql = "DELETE from ctcweb9_ctc.mailchimp_subscriptions where memberId = $userid and listid not in (".join(",",$listids).")";
+	$sql = "DELETE from ctc.mailchimp_subscriptions where memberId = $userid and listid not in (".join(",",$listids).")";
 	echo "<pre>$sql</pre>";
 	echo mysql_query($sql,$con) or die('delete');
-	$sql = "INSERT into ctcweb9_ctc.mailchimp_subscriptions(listid,memberid)
+	$sql = "INSERT into ctc.mailchimp_subscriptions(listid,memberid)
 			SELECT listid,$userid 
-			FROM ctcweb9_ctc.mailchimp_lists
+			FROM ctc.mailchimp_lists
 			WHERE listid in (".join(",",$listids).")
-			AND listid not in (select listid from ctcweb9_ctc.mailchimp_subscriptions where memberid = $userid)";
+			AND listid not in (select listid from ctc.mailchimp_subscriptions where memberid = $userid)";
 	echo "<pre>$sql</pre>";
 	echo mysql_query($sql,$con) or die('insert');
 	
@@ -32,8 +32,8 @@ if ($_POST['update'] == 'Update') {
 }
 	
 echo json_encode(MailChimpSqlResultToArray($con,"select ml.listname, ms.* 
-						from ctcweb9_ctc.mailchimp_subscriptions ms
-						join ctcweb9_ctc.mailchimp_lists ml on ml.listid = ms.listid
+						from ctc.mailchimp_subscriptions ms
+						join ctc.mailchimp_lists ml on ml.listid = ms.listid
 						where memberId = $userid"));
 
 foreach ($lists['data'] as &$list)

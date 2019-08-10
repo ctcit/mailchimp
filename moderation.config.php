@@ -1,9 +1,9 @@
 <?php
 class ModerationConfig
 {
-    const SrcName = "members_test";
+    const SrcName = "members-test";
     const SrcDomain = "ctc.org.nz";
-    const MailRoot = "C:\\wamp\\mail\\ctc.org.nz\\"; // Need better way to define this
+    const MailRoot = "/var/mail/"; // Need better way to define this
     const Unmoderated = "/.Unmoderated";
     const Moderated = "/.Moderated";
     const ModeratorRoleName = "Email Moderator";

@@ -41,6 +41,7 @@ function MailChimpSend($listid,$subject,$body,$from_email,$from_name,$to_name)
         "type"    =>"regular",
         "options" =>array(
             "list_id"     => $listid,
+            "list_id"     => $listid,
             "subject"     => $subject,
             "from_email"  => $from_email,
             "from_name"   => $from_name,
@@ -56,24 +57,24 @@ function MailChimpSend($listid,$subject,$body,$from_email,$from_name,$to_name)
         MailChimpRequest("campaigns/send",array("cid"=>$result['id']));
 }
 
-// updates the 'Members' list from the ctcweb9_ctc.phplist_listuser view
+// updates the 'Members' list from the ctc.phplist_listuser view
 function MailChimpResetSubscription($con)
 {
     MailChimpUpdateLists($con);
 
-    $lists = SqlResultArray($con,"SELECT listid FROM ctcweb9_ctc.mailchimp_lists where listname = 'Members'");
+    $lists = SqlResultArray($con,"SELECT listid FROM ctc.mailchimp_lists where listname = 'Members'");
     $listid = $lists[0]["listid"];
 
-    SqlExecOrDie($con,"DELETE from ctcweb9_ctc.mailchimp_subscriptions where listid = '$listid'");
-    SqlExecOrDie($con,"INSERT into ctcweb9_ctc.mailchimp_subscriptions(listid,memberid) ".
+    SqlExecOrDie($con,"DELETE from ctc.mailchimp_subscriptions where listid = '$listid'");
+    SqlExecOrDie($con,"INSERT into ctc.mailchimp_subscriptions(listid,memberid) ".
                  "SELECT '$listid', m.id ".
-                 "from ctcweb9_ctc.members m ".
-                 "join ctcweb9_ctc.memberships ms on ms.id = m.membershipid ".
+                 "from ctc.members m ".
+                 "join ctc.memberships ms on ms.id = m.membershipid ".
                  "where ms.statusAdmin='Active' and m.onEmailListBool ='Yes'");
 }
 
 
-// this updates the ctcweb9_ctc.mailchimp_lists table from the list of lists from mailchimp
+// this updates the ctc.mailchimp_lists table from the list of lists from mailchimp
 function MailChimpUpdateLists($con)
 {
     $lists = MailChimpRequest("lists/list");
@@ -85,7 +86,7 @@ function MailChimpUpdateLists($con)
         $name = SqlVal($list['name']);
         $listids []= "'$id'";
 
-        SqlExecOrDie($con,"insert into ctcweb9_ctc.mailchimp_lists(listid,listname)
+        SqlExecOrDie($con,"insert into ctc.mailchimp_lists(listid,listname)
                    values('$id',$name)
                    on duplicate key update listname = $name ");
 
@@ -93,13 +94,13 @@ function MailChimpUpdateLists($con)
 
     $listids = implode(",",$listids);
 
-    SqlExecOrDie($con,"delete from ctcweb9_ctc.mailchimp_subscriptions where listid not in ( $listids )");
-    SqlExecOrDie($con,"delete from ctcweb9_ctc.mailchimp_lists         where listid not in ( $listids )");
+    SqlExecOrDie($con,"delete from ctc.mailchimp_subscriptions where listid not in ( $listids )");
+    SqlExecOrDie($con,"delete from ctc.mailchimp_lists         where listid not in ( $listids )");
 }
 
 function MailChimpUpdateListsFromDB($con)
 {
-    $list = SqlResultArray($con, "select listid, listname from ctcweb9_ctc.mailchimp_lists");
+    $list = SqlResultArray($con, "select listid, listname from ctc.mailchimp_lists");
     $changed = array();
 
     foreach ($list as $item)
@@ -112,19 +113,19 @@ function MailChimpUpdateListsFromDB($con)
     return $changed;
 }
 
-// updates the desired mailChimp subscription list from ctcweb9_ctc.mailchimp_subscriptions
+// updates the desired mailChimp subscription list from ctc.mailchimp_subscriptions
 // creating, updating or deleting as necessary
 function MailChimpUpdateListFromDB($con,$listid)
 {
-    $list = SqlResultArray($con,"select listname from ctcweb9_ctc.mailchimp_lists where listid='$listid'");
+    $list = SqlResultArray($con,"select listname from ctc.mailchimp_lists where listid='$listid'");
     $listname = $list[0]["listname"];
-    //$list = MailChimpSqlResultToArray($con,"select listname from ctcweb9_ctc.mailchimp_lists where listid='$listid'");
+    //$list = MailChimpSqlResultToArray($con,"select listname from ctc.mailchimp_lists where listid='$listid'");
     //$listname = $list[0]["listname"];
 
     // Get the current state from the table
     $sql = "SELECT UCASE(primaryEmail) as K, primaryEmail as EMAIL,trim(firstName) as FNAME,trim(lastName) as LNAME, memberid, 'create' as Action
-            from ctcweb9_ctc.members m
-            join ctcweb9_ctc.mailchimp_subscriptions ms on ms.memberid = m.id
+            from ctc.members m
+            join ctc.mailchimp_subscriptions ms on ms.memberid = m.id
             where listid='$listid' and primaryEmail != '' and not (primaryEmail is null)
             order by primaryEmail";
     $list = SqlResultArray($con,$sql,"K");

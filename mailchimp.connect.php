@@ -13,7 +13,7 @@ $config = JFactory::getConfig();
 
 
 $username = $user->username;
-$userrow 	= SqlResultArray($con,"SELECT primaryEmail,firstName,lastName FROM ctcweb9_ctc.view_members where loginname = '$username' ");
+$userrow 	= SqlResultArray($con,"SELECT primaryEmail,firstName,lastName FROM ctc.view_members where loginname = '$username' ");
 if (count($userrow))
 {
 	$userid = $userobj->id;

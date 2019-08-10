@@ -1,10 +1,5 @@
 <?php
 
-//define( '_VALID_MOS', 1 );
-
-//require_once( '/home1/ctcweb9/public_html/includes/alastair.php' );
-//require_once( '/home1/ctcweb9/public_html/mailchimp/moderation.config.php' );
-//require_once( '/home1/ctcweb9/public_html/mailchimp/PlancakeEmailParser.php' );
 define('_JEXEC', 1);
 require_once( 'alastair.php' );
 require_once( 'moderation.config.php' );
@@ -62,7 +57,7 @@ foreach ($dirs as $dir) {
 		$step2Url = $live_site."/".ModerationConfig::Step2Url;
         $step2ImageUrl = $live_site."/".ModerationConfig::Step2DirectUrl;
 			
-		$lists = SqlResultArray($con, "select listid, listname from ctcweb9_ctc.mailchimp_lists");
+		$lists = SqlResultArray($con, "select listid, listname from ctc.mailchimp_lists");
 		$headers = "MIME-Version: 1.0\r\n".
 			   "Content-type: text/html;charset=UTF-8\r\n".
 			   "From: <".ModerationConfig::SrcName."@".ModerationConfig::SrcDomain.">\r\n";
@@ -74,9 +69,9 @@ foreach ($dirs as $dir) {
 		
 		$moderators = SqlResultArray($con, "
 			select memberid, primaryemail, firstname, lastname
-			from ctcweb9_ctc.members m
-			join ctcweb9_ctc.members_roles mr on mr.memberid = m.id 
-			join ctcweb9_ctc.roles r on r.id = mr.roleid and r.role = ".SqlVal(ModerationConfig::ModeratorRoleName)."");
+			from ctc.members m
+			join ctc.members_roles mr on mr.memberid = m.id 
+			join ctc.roles r on r.id = mr.roleid and r.role = ".SqlVal(ModerationConfig::ModeratorRoleName)."");
 		
 		foreach ($moderators as $moderator) {
 			$modid = $moderator["memberid"];

@@ -20,9 +20,9 @@ function GetLogonDetails($con,$username,$params="",$roleclause="1=1")
 {
     $userrow = SqlResultArray($con,"
             SELECT primaryEmail,firstName,lastName
-            FROM ctcweb9_ctc.members             m
-            LEFT JOIN ctcweb9_ctc.members_roles  mr  on mr.memberid = m.id
-            LEFT JOIN ctcweb9_ctc.roles          r   on r.id = mr.roleid
+            FROM ctc.members             m
+            LEFT JOIN ctc.members_roles  mr  on mr.memberid = m.id
+            LEFT JOIN ctc.roles          r   on r.id = mr.roleid
             where loginname = ".SqlVal($username["name"])." and $roleclause");
 
     if (count($userrow))
