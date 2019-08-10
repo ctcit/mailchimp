@@ -187,14 +187,14 @@ function MailChimpUpdateListFromDB($con,$listid)
 
     // Generate subscribe or unsubscribe actions as necessary
     foreach ($members as $member) {
-        $email = $member["email_address"];
-        $fname = $member["FNAME"];
-        $lname = $member["LNAME"];
 		$memberid = $member["id"];
 
         $changed []= $member;
 
         if ($member["Create"] != "") {
+            $email = $member["email_address"];
+            $fname = $member["FNAME"];
+            $lname = $member["LNAME"];
 			$audit = "create $email $fname $lname";
 			$data = array(	"email_address" => $email,
 							"status"		=> "subscribed",
@@ -204,6 +204,9 @@ function MailChimpUpdateListFromDB($con,$listid)
         }
 
         if ($member["Update"] != "") {
+            $email = $member["email_address"];
+            $fname = $member["FNAME"];
+            $lname = $member["LNAME"];
 			$audit = "update $email $fname $lname";
 			$data = array("merge_fields"=> array("FNAME" => $fname, "LNAME"	=> $lname));
             $changed []= $audit;
@@ -211,6 +214,9 @@ function MailChimpUpdateListFromDB($con,$listid)
         }
 
         if ($member["Subscribe"] != "") {
+            $email = $member["email_address"];
+            $fname = $member["FNAME"];
+            $lname = $member["LNAME"];
 			$audit = $member["Subscribe"]." $email $fname $lname";
 			$data = array("status" => $member["Subscribe"]);
             $changed []= $audit;
