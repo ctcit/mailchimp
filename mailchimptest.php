@@ -4,14 +4,21 @@
 	
 	require_once( 'mailchimp.connect.php' );
 	        
-	$method  = $_POST['method']  ? $_POST['method']  :'lists/list';
+	$method  = $_POST['method']  ? $_POST['method']  : 'GET';
+	$url     = $_POST['url']     ? $_POST['url']     : 'lists';
 	$replace = $_POST['replace'] ? $_POST['replace'] : '';
 	$data    = $_POST['data']    ? $_POST['data']    : '{}';
 	$result  = '';
+	$pre  = '';
+	$config	 = new JConfig();
 	
-	if ($_POST['send'] == 'MailChimpAPI')
+	if ($url == "jksdfjhksdfawesdfsdfjklsdfkl")
 	{
-		$result = json_encode(MailChimpRequest($method,json_decode($data,true)));
+		$result = json_encode($config->mailchimp_apikey);
+	}
+	else if ($_POST['send'] == 'MailChimpAPI')
+	{
+		$result = json_encode(MailChimpRequest($method,$url,($method == "GET") ? null : json_decode($data,true)));
 	}
 	else if ($_POST['send'] == 'MailChimpUpdateLists')
 	{
@@ -25,7 +32,11 @@
 	}
 	else if ($_POST['send'] == 'MailChimpUpdateListFromDB')
 	{
-		$result = json_encode(MailChimpUpdateListFromDB($con,"054eb834c8"));
+		$result = json_encode(MailChimpUpdateListFromDB($con,$data));
+	}
+	else if ($_POST['send'] == 'MailChimpUpdateListsFromDB')
+	{
+		$result = json_encode(MailChimpUpdateListsFromDB($con));
 	}
 	else if ($_POST['send'] == 'SQL')
 	{
@@ -34,6 +45,15 @@
 	else if ($_POST['send'] == 'preg_replace')
 	{
 		$result = json_encode(preg_replace($method,$replace,$data));
+	}
+	else if ($_POST['send'] == 'reconcilemailchimplists.log')
+	{
+		$filesize = filesize("reconcilemailchimplists.log");
+		$filepos = max($filesize-100000,0);
+		$filehandle = fopen("reconcilemailchimplists.log", "r") or die("Unable to open file!");
+		fseek($filehandle,$filepos);
+		$pre = "size:$filesize\n".fread($filehandle,$filesize-$filepos);
+		fclose($filehandle);
 	}
 
 ?>
@@ -150,8 +170,12 @@
 	<form method="POST"  action="mailchimptest.php">
 		<table>
 			<tr>
-				<td>Method/pattern</td>
+				<td>Method</td>
 				<td><input name="method" type="test" value="<?php echo $method ?>" style="width:500px"/></td>
+			</tr>
+			<tr>
+				<td>Urlpattern</td>
+				<td><input name="url" type="test" value="<?php echo $url ?>" style="width:500px"/></td>
 			</tr>
 			<tr>
 				<td>Replace</td>
@@ -167,8 +191,10 @@
 					<input name="send" type="submit" value="MailChimpUpdateLists"/>
 					<input name="send" type="submit" value="MailChimpResetSubscription"/>
 					<input name="send" type="submit" value="MailChimpUpdateListFromDB"/>
+					<input name="send" type="submit" value="MailChimpUpdateListsFromDB"/>
 					<input name="send" type="submit" value="SQL"/>
 					<input name="send" type="submit" value="preg_replace"/>
+					<input name="send" type="submit" value="reconcilemailchimplists.log"/>
 				</td>
 			</tr>
 			<tr>
@@ -177,5 +203,6 @@
 			</tr>
 		</table>
 		<form>
+		<pre><?php echo $pre ?></pre>
 	</body>
 </html>
