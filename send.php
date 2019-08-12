@@ -11,21 +11,21 @@ $result  = 'Not yet sent';
 
 if ($_POST['send'] == 'Send')
 {
-	$result = MailChimpSend($listid,$subject,$body,"noreply@ctc.org.nz","noreply@ctc.org.nz","You");
+    $result = mailChimpSend($listid,$subject,$body,"noreply@ctc.org.nz","noreply@ctc.org.nz","You");
 }
 
 ?>
 <html>
-	<head>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-		<script type="text/javascript" src="../media/editors/tinymce/tinymce.min.js"></script>
-		<script type="text/javascript">
-			tinyMCE.init({
-				mode : "textareas",
-				theme : "simple"
-			});
-		</script>
-	
+    <head>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script type="text/javascript" src="../media/editors/tinymce/tinymce.min.js"></script>
+        <script type="text/javascript">
+            tinyMCE.init({
+                mode : "textareas",
+                theme : "simple"
+            });
+        </script>
+    
 
     <style>
     </style>
@@ -33,40 +33,40 @@ if ($_POST['send'] == 'Send')
     
 
     </script>
-	</head>
-	<body>
-	<form method="POST"  action="send.php">
-		<table>
-			<tr>
-				<td>List</td>
-				<td>
-					<select name="listid">
-						<?php
-						$lists = MailChimpRequest("lists/list");
-						foreach ($lists['data'] as $item)
-						{
-							echo "<option value='".$item['id']."' >".$item['name']."</option>";
-						}
-						?>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Subject</td>
-				<td><input name="subject" type="text" value="<?php echo $subject ?>"/></td>
-			</tr>
-			<tr>
-				<td>Body</td>
-				<td><textarea name="body" id="body" style="width:500px;height:200px"><?php echo $body ?></textarea></td>
-			</tr>
-			<tr>
-				<td><input name="send" type="submit" value="Send"/></td>
-			</tr>
-			<tr>
-				<td>Result</td>
-				<td><?php echo json_encode($result)?></td>
-			</tr>
-		</table>
-		<form>
-	</body>
+    </head>
+    <body>
+    <form method="POST"  action="send.php">
+        <table>
+            <tr>
+                <td>List</td>
+                <td>
+                    <select name="listid">
+                        <?php
+                        $lists = mailChimpRequest("lists/list");
+                        foreach ($lists['data'] as $item)
+                        {
+                            echo "<option value='".$item['id']."' >".$item['name']."</option>";
+                        }
+                        ?>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Subject</td>
+                <td><input name="subject" type="text" value="<?php echo $subject ?>"/></td>
+            </tr>
+            <tr>
+                <td>Body</td>
+                <td><textarea name="body" id="body" style="width:500px;height:200px"><?php echo $body ?></textarea></td>
+            </tr>
+            <tr>
+                <td><input name="send" type="submit" value="Send"/></td>
+            </tr>
+            <tr>
+                <td>Result</td>
+                <td><?php echo json_encode($result)?></td>
+            </tr>
+        </table>
+        <form>
+    </body>
 </html>

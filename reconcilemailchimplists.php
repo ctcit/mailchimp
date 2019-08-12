@@ -7,15 +7,15 @@ require_once( 'mailchimp.inc.php' );
 
 echo gmdate('Y-m-d H:i:s')." MailChimpResetSubscription\n";
 
-MailChimpResetSubscription($con);
+mailChimpResetSubscription($con);
 
 echo gmdate('Y-m-d H:i:s')." MailChimpUpdateLists\n";
 
-MailChimpUpdateLists($con);
+mailChimpUpdateLists($con);
 
 echo gmdate('Y-m-d H:i:s')." MailChimpUpdateListsFromDB\n";
 
-MailChimpUpdateListsFromDB($con);
+mailChimpUpdateListsFromDB($con);
 
 echo gmdate('Y-m-d H:i:s')." reconcilliation complete\n";
 

@@ -16,16 +16,16 @@ $username = $user->username;
 $userrow 	= SqlResultArray($con,"SELECT primaryEmail,firstName,lastName FROM ctc.view_members where loginname = '$username' ");
 if (count($userrow))
 {
-	$userid = $userobj->id;
-	$email  = $userrow[0]['primaryEmail'];
-	$fname  = $userrow[0]['firstName'];
-	$lname  = $userrow[0]['lastName'];
+    $userid = $userobj->id;
+    $email  = $userrow[0]['primaryEmail'];
+    $fname  = $userrow[0]['firstName'];
+    $lname  = $userrow[0]['lastName'];
 }
 else
 {
     $url = $config->get('live_site');
-	echo "<script>window.location.replace('$url');</script>";
-	die('not logged on');
+    echo "<script>window.location.replace('$url');</script>";
+    die('not logged on');
 }
     
 ?>
