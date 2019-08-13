@@ -28,21 +28,21 @@
                           <td>
                               <button class="send action" type="button" id="send" ng-click="data.Action('send',data.listid)"
                                   ng-attr-title="Click here to send to {{data.listname}} list">
-                                  <img src="send.png"/>Send to {{data.listname}} list
+                                  <img src="images/send.png"/>Send to {{data.listname}} list
                                       <span ng-show="!data.stop"> in 
                                           <span style="font-weight:bold; font-size:large">{{data.config.ActionDelay}}</span> 
                                           seconds</span></button><br/>
                               <button class="stop action" type="button" ng-click="data.Toggle('stop')" ng-disabled="data.stop">
-                                  <img src="stop.png"/>{{data.stop ? 'Countdown stopped' : 'Stop countdown'}}</button><br/>
+                                  <img src="images/stop.png"/>{{data.stop ? 'Countdown stopped' : 'Stop countdown'}}</button><br/>
                               <button class="edit action" type="button" ng-click="data.Action('edit')"
                                   ng-attr-title="Click here to edit this message before sending">
-                                  <img src="edit.png"/>Edit this message before sending</button>
+                                  <img src="images/edit.png"/>Edit this message before sending</button>
                           </td>
                 </tr>
                 <tr ng-show="data.action != 'sending'">
                     <th>Action</th>
                     <td>
-                        <div ng-class="'action '+data.action"><img ng-attr-src="{{data.action}}.png"/>{{data.captionweb}}</div>
+                        <div ng-class="'action '+data.action"><img ng-attr-src="images/{{data.action}}.png"/>{{data.captionweb}}</div>
                     </td>
                 </tr>
                 <tr ng-repeat="folder in data.list">
@@ -61,7 +61,7 @@
                             <td>{{email.from}}</td>
                             <td>{{email.date}}</td>
                             <td ng-show="folder.name == 'Moderated'" ng-class="email.classname">
-                                <img ng-src="{{email.classname}}.png"/>{{email.ctcaction}}</td>
+                                <img ng-src="images/{{email.classname}}.png"/>{{email.ctcaction}}</td>
                         </tr>
                         </table>
                     </td>
@@ -85,26 +85,26 @@
                             <div ng-repeat="list in data.lists">
                                       <button class="send action" type="submit" ng-click="data.Action('send',list.listid)"
                                       ng-attr-title="Click here to send to {{list.listname}} list">
-                                      <img src="send.png">Send to {{list.listname}} list</button>
+                                      <img src="images/send.png">Send to {{list.listname}} list</button>
                                   </div>
                                   <button class="discard action" type="submit" ng-click="data.Action('discard')"
                                       ng-attr-title="Click here to discard this message">
-                                      <img src="discard.png">Discard this message</button>
+                                      <img src="images/discard.png">Discard this message</button>
                                   </div>
                                   <div ng-show="data.ctcaction.split(' ')[0] == 'discarded'">
                             <button class="undo action" type="submit" ng-click="data.Action('undo')"
                                 ng-attr-title="Click here to undo the discard and edit this message">
-                                      <img src="undo.png">Undo the discard and edit this message</button>
+                                      <img src="images/undo.png">Undo the discard and edit this message</button>
                               </div>
                                   <div ng-show="data.ctcaction.split(' ')[0] == 'NOT'">
                             <button class="undo action" type="submit" ng-click="data.Action('retry')"
                                 ng-attr-title="Click here to retry the message">
-                                      <img src="retry.png">Retry sending this message</button>
+                                      <img src="images/retry.png">Retry sending this message</button>
                               </div>
                               <div>
                             <button class="list action" type="button" ng-click="data.Link('list')"
                                 ng-attr-title="Click here to list all moderated and unmoderated emails">
-                                      <img src="list.png">List all moderated and unmoderated emails</button>
+                                      <img src="images/list.png">List all moderated and unmoderated emails</button>
                               </div>
                               </td>
                           </tr>
@@ -140,7 +140,7 @@
                         - set up in 
                         <a href= "{{data.livesite}}/db/index.php/ctc/manageRoles">{{data.livesite}}/db/index.php/ctc/manageRoles</a>)</li>
                     <li>The moderation email is in this format:<br/>
-                        <img src="ModerationEMail.png"/></li>
+                        <img src="images/ModerationEMail.png"/></li>
                     <li>One of the moderators will select one of the options in the email</li>
                     <li>If a "Click to send" option is selected then the moderator is presented with a screen that gives them 
                         {{data.config.ActionDelay}} seconds <br/>
@@ -152,13 +152,13 @@
                     <p>Please note:</p>
                     <ul>
                         <li>If a another moderator has already moderated the message, then the email options will appear as follows:<br/>
-                            <img src="ModerationAlreadySent.png"/><br/>
+                            <img src="images/ModerationAlreadySent.png"/><br/>
                             or<br/>
-                            <img src="ModerationAlreadyDiscarded.png"/></li>
+                            <img src="images/ModerationAlreadyDiscarded.png"/></li>
                         <li>If raw email data is understood it may help confirm (or otherwise) the legitimacy of an email for moderation.<br/>
-                            Clicking on the <img src="ModerationShow.png"/> button after the <b>Raw</b> will show the raw email data.</li>
+                            Clicking on the <img src="images/ModerationShow.png"/> button after the <b>Raw</b> will show the raw email data.</li>
                         <li>Moderated and Unmoderated messages may be viewed by clicking on 
-                            <img src="ModerationList.png"/>.<br/>
+                            <img src="images/ModerationList.png"/>.<br/>
                         Alternative access is via this link:
                                             <br/>
                         <a href="{{data.formaction}}?action=list">{{data.formaction}}&#63;action=list</a>

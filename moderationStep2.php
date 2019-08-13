@@ -137,7 +137,7 @@ if ($isImg){
     $actionSizeX = $css[".action"]["width"];
     $actionSizeY = $css[".action"]["height"];
     $actionGap = $css[".actiongap"]["height"];
-    $icon = @imagecreatefrompng("$action.png") or die("cannot create png image - $action.png");
+    $icon = @imagecreatefrompng("images/$action.png") or die("cannot create png image - images/$action.png");
     $image = @imagecreatetruecolor($actionSizeX,$actionSizeY) or die("cannot create image");
     
     $colorfg = $css[".$action"]["color"];	
