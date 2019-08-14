@@ -18,9 +18,10 @@ $editedsubject = strval($getpost["editedsubject"]);
 $editedbody = strval($getpost["editedbody"]);
 $editedfrom = strval($getpost["editedfrom"]);
 
-if (!$isImg)
+if (!$isImg) {
     // Do this now before anything gets changed
     GetLogonDetails($con,$username, $params, "role = ".SqlVal(ModerationConfig::ModeratorRoleName));
+}
 
 $unmoderateddir = ModerationConfig::GetUnmoderatedDir()."/cur/$msgid,*";
 $moderateddir = ModerationConfig::GetModeratedDir()."/cur/$msgid,*";

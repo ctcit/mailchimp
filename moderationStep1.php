@@ -2,33 +2,12 @@
 
 define('_JEXEC', 1);
 require_once( 'includes/alastair.php' );
-require_once( 'includes/moderation.config.php' );
+require_once( 'config/moderation.config.php' );
+require_once( 'includes/moderation.inc.php' );
 require_once( 'includes/PlancakeEmailParser.php' );
 jimport( 'joomla.mail.helper' );
 jimport( 'joomla.mail.mail' );
 
-
-function GetHtmlFromMessage($msg) {
-
-	if ($msg->getHeader("Content-Transfer-Encoding") == "quoted-printable")	{
-		return preg_replace_callback(
-			"/=[0-9a-f][0-9a-f]|[<>&=]|\n/i",
-			function ($matches) {
-				$match = strlen($matches[0]) == 3 ? chr(hexdec($matches[0])) : $matches[0];
-				
-		        	return	($matches[0] == "=" ? "" : 
-		        		($matches[0] == "\n" ? "" : 
-		        		($match == "<" ? "&lt;" :
-		        		($match == ">" ? "&gt;" :
-		        		($match == "&" ? "&amp;" :
-		        		($match == "\n" ? "<br/>\n" : chr(hexdec($matches[0]))))))));
-		        },
-		        $msg->getPlainBody());
-        } else {
-		return preg_replace(ModerationConfig::BodyClearPattern,"",$msg->getHtmlBody());
-	}
-	
-}
 $config = JFactory::getConfig();
 $live_site = $config->get("live_site");
 echo "<style>".file_get_contents(ModerationConfig::CssFile)."</style>";
@@ -61,7 +40,6 @@ foreach ($dirs as $dir) {
 		$headers = "MIME-Version: 1.0\r\n".
 			   "Content-type: text/html;charset=UTF-8\r\n".
 			   "From: <".ModerationConfig::SrcName."@".ModerationConfig::SrcDomain.">\r\n";
-		$sender = ModerationConfig::SrcName."@".ModerationConfig::SrcDomain;
 		echo "	<table>
 			<tr><th>msgid</th><td>$msgid</td>
 			<tr><th>ctcid</th><td>$ctcid</td>
@@ -107,31 +85,12 @@ foreach ($dirs as $dir) {
 					</table>";
 		
 			if (ModerationConfig::Step1SendEnabled) {
-
-                # Invoke JMail Class
-                $mailer = JFactory::getMailer();
-
-                # Set sender array so that my name will show up neatly in your inbox
-                $mailer->setSender($sender);
-
-                # Add a recipient -- this can be a single address (string) or an array of addresses
-                $mailer->addRecipient($modemail);
-
-                $mailer->isHtml(true);
-                $mailer->setBody($modbody);
-                $mailer->setSubject(ModerationConfig::Step1SubjectPrefix.$subject);
-
-
-                # Send once you have set all of your options
-                $result = $mailer->send();
-
-                
-				//$result = mail($modemail, ModerationConfig::Step1SubjectPrefix.$subject, $modbody, $headers);
+ 				SendModerationEmail($modemail, $subject, $modbody);
 			} else {
 				$result = "Send Disabled";
 			}
 				
-			echo "	<tr><th>Moderator</th><td>$modemail $modname</td></tr>
+			echo "<tr><th>Moderator</th><td>$modemail $modname</td></tr>
 				<tr><th>mail() result</th><td>$result</td></tr>
 				<tr><th>Moderation message</th><td>$modbody</td></tr>";
 		}
