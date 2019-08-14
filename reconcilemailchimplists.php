@@ -2,8 +2,8 @@
 
 define( '_VALID_MOS', 1 );
 
-require_once( 'alastair.php' );
-require_once( 'mailchimp.inc.php' );
+require_once( 'includes/alastair.php' );
+require_once( 'includes/mailchimp.inc.php' );
 
 echo gmdate('Y-m-d H:i:s')." MailChimpResetSubscription\n";
 
