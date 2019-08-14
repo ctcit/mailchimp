@@ -17,7 +17,7 @@ class ModerationConfig
     const Step2SendEnabled = true;
     const BodyClearPattern = "/<[\/]?(html|body)\b[^>]*>/i";
     const ActionDelay = 10;
-    const CssFile = "moderation.css";
+    const CssFile = "styles/moderation.css";
 
     public static function GetInboxDir() { return self::MailRoot.self::SrcName; }
     public static function GetModeratedDir() { return self::MailRoot.self::SrcName.self::Moderated; }

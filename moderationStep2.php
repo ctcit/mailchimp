@@ -1,9 +1,9 @@
 <?php
 define('_JEXEC', 1);
-require_once( 'alastair.php' );
-require_once( 'moderation.config.php' );
-require_once( 'PlancakeEmailParser.php' );
-require_once( 'mailchimp.inc.php' );
+require_once( 'includes/alastair.php' );
+require_once( 'config/moderation.config.php' );
+require_once( 'includes/PlancakeEmailParser.php' );
+require_once( 'includes/mailchimp.inc.php' );
 
 $getpost =  $_GET["action"] == null ? $_POST : $_GET;
 //var_dump($getpost);
@@ -156,7 +156,7 @@ if ($isImg){
         imagefilledrectangle($image, $x1, $y1, $x1, $y2, GetColor($image,$colorbg,"white"));
     }
     
-    imagettftext($image,$fillY*0.6,0,$fillY+$actionBorder,$fillY*0.8,GetColor($image,$colorfg),"arial.ttf",$captionimg);
+    imagettftext($image,$fillY*0.6,0,$fillY+$actionBorder,$fillY*0.8,GetColor($image,$colorfg),"styles/arial.ttf",$captionimg);
     imagecopyresized($image,$icon,$actionBorder,$actionBorder,0,0,imagesx($icon),imagesy($icon),imagesx($icon),imagesy($icon));
             
     header("Content-type: image/png");
