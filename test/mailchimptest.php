@@ -2,7 +2,7 @@
     // Set flag that this is a parent file
     define( '_VALID_MOS', 1 );
     
-    require_once( 'mailchimp.connect.php' );
+    require_once( '../includes/alastair.php' );
             
     $method  = $_POST['method']  ? $_POST['method']  : 'GET';
     $url     = $_POST['url']     ? $_POST['url']     : 'lists';

@@ -2,8 +2,8 @@
 
 define( '_VALID_MOS', 1 );
 
-require_once( '/home1/ctcweb9/public_html/includes/alastair.php' );
-require_once( '/home1/ctcweb9/public_html/mailchimp/moderation.config.php' );
+require_once( '../includes/alastair.php' );
+require_once( '../config/moderation.config.php' );
 GetLogonDetails($con,$username);
 
 $dirs = array(	ModerationConfig::GetInboxDir()."/cur",
@@ -24,7 +24,7 @@ foreach ($dirs as $dir) {
 	}
 }
 
-$dir = "/home1/ctcweb9/public_html/mailchimp/TestEmails";
+$dir = "../TestEmails";
 $files = scandir($dir);
 foreach ($files as $file) {
 	if (is_dir("$dir/$file")) continue;
