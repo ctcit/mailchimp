@@ -1,6 +1,6 @@
 <?php
 
-define('JPATH_BASE', dirname(__DIR__));// Assume mailchimp at top level in website
+define('JPATH_BASE', dirname(dirname(__DIR__)));// Assume mailchimp at top level in website
 require_once ( JPATH_BASE.'/configuration.php' );
 
 function mailChimpRequest($method, $url, $data = null, $audit = null, $verbose = false)
