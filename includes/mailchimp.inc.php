@@ -6,7 +6,7 @@ require_once ( JPATH_BASE.'/configuration.php' );
 function mailChimpRequest($method, $url, $data = null, $audit = null, $verbose = false)
 {
     $config = new JConfig();
-    $completeurl = "https://us8.api.mailchimp.com/3.0/$url";
+    $completeurl = $config->mailchimp_apiurl."/$url";
     $streamdata =  array(
             "http" => array(
                 "protocol_version" => 1.1,
