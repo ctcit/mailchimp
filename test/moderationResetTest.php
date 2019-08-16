@@ -24,7 +24,7 @@ foreach ($dirs as $dir) {
 	}
 }
 
-$dir = "../TestEmails";
+$dir = "TestEmails";
 $files = scandir($dir);
 foreach ($files as $file) {
 	if (is_dir("$dir/$file")) continue;
