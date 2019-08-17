@@ -46,8 +46,6 @@ function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
 {
     $config = new JConfig();
     $templates = mailChimpRequest("GET","templates?type=user",null,"mailChimpSend");
-    {"type":"regular", "recipients": { "list_id":"9d1cdaa8b4" }, "settings": {"subject_line":"TEst from","reply_to":"ijustlost@gmail.com","
-        from_name":"From me","template_id":320761}}
     $args = array(
         "type"    =>"regular",
         "recipients" => array( "list_id" => $listid ),
