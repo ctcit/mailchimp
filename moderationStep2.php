@@ -175,6 +175,7 @@ if ($isImg){
             "ctcaction" => $ctcaction,
             "subject" => $subject,
             "body" => $body,
+            "from" => $from,
             "list" => $list,
             "lists" => $action == "edit" ? SqlResultArray($con, "select listid, listname from ctc.mailchimp_lists") : null,
             "listid" => $listid,
