@@ -95,7 +95,7 @@ if ($action == "list") {
         $captionimg = "Click to discard this message";
     } else if (!ModerationConfig::Step2SendEnabled) {
         $ctcaction = "sent to $listname by $modname (disabled)";
-    } else if (mailChimpSend($listid, $step2SubjectPrefix.$subject, $body, $from, $from, "You") === false) {
+    } else if (mailChimpSend($listid, $step2SubjectPrefix.$subject, $body, $from, "You") === false) {
         $ctcaction = "NOT sent to $listname by $modname - API call failed";
         $action = "warning";
     } else {

@@ -42,15 +42,16 @@ function mailChimpRequest($method, $url, $data = null, $audit = null, $verbose =
 }
 
 // creates and sends a campaign using the given list
-function mailChimpSend($listid,$subject,$body,$from_email,$from_name,$to_name)
+function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
 {
+    $config = new JConfig();
     $templates = mailChimpRequest("GET","templates?type=user",null,"mailChimpSend");
     $args = array(
         "type"    =>"regular",
         "options" =>array(
             "list_id"     => $listid,
             "subject"     => $subject,
-            "from_email"  => $from_email,
+            "from_email"  => $config->mailchimp_fromemail,
             "from_name"   => $from_name,
             "to_name"     => $to_name,
             "template_id" => $templates['templates'][0]['id']
