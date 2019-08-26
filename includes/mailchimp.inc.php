@@ -8,11 +8,13 @@ function mailChimpRequest($method, $url, $data = null, $audit = null, $verbose =
     $config = new JConfig();
     $completeurl = $config->mailchimp_apiurl."/$url";
     $streamdata =  array(
-            "http" => array(
-                "protocol_version" => 1.1,
-                "method"           => $method,
-                "header"           => "Authorization: apikey ".$config->mailchimp_apikey."\r\n".
-                                      "Connection: close\r\n"));
+        "http" => array(
+            "protocol_version" => 1.1,
+            "method"           => $method,
+            "header"           => "Authorization: apikey ".$config->mailchimp_apikey."\r\n".
+                                    "Connection: close\r\n"
+        )
+    );
 
     if ($data != null) {
         $contenttype = $method == "PATCH" ? "application/json-patch+json" : "application/json";
@@ -61,16 +63,15 @@ function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
      */
     $args = array(
         "type"    =>"regular",
-	"recipients" => array( 
-		"list_id" => $listid,
-       	),
-        "settings" =>array(
+        "recipients" => array(
+            "list_id" => $listid,
+        ),
+        "settings" => array(
             "subject_line"     => $subject,
             "reply_to"  => $config->mailchimp_mailfrom,
             "from_name"   => $from_name,
             )
         );
-
 
     $campaign = mailChimpRequest("POST","campaigns",$args,"mailChimpSend", true);
 
@@ -78,16 +79,16 @@ function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
 
     if ($campaign)
     {
-	    $content_args = array(
-		"template" => array(
-		    "id" => $templates['templates'][0]['id'],
-		    "sections" => Array("body" => $body)
-		    )
-		);
+        $content_args = array(
+            "template" => array(
+                "id" => $templates['templates'][0]['id'],
+                "sections" => Array("body" => $body)
+            )
+        );
 
-	    mailChimpRequest("PUT","campaigns/".$campaign['id']."/content",$content_args,"mailChimpSend", true);
+        mailChimpRequest("PUT","campaigns/".$campaign['id']."/content",$content_args,"mailChimpSend", true);
 
-	    $result = mailChimpRequest("POST","campaigns/".$campaign['id']."/actions/send",null,"mailChimpSend", true);
+        $result = mailChimpRequest("POST","campaigns/".$campaign['id']."/actions/send",null,"mailChimpSend", true);
     }
     return $result;
 }
@@ -123,7 +124,6 @@ function mailChimpUpdateLists($con)
         SqlExecOrDie($con,"insert into ctc.mailchimp_lists(listid,listname)
                    values('$id',$name)
                    on duplicate key update listname = $name ");
-
     }
 
     if (count($listids) > 0) {
