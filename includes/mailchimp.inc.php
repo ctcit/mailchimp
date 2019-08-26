@@ -30,15 +30,17 @@ function mailChimpRequest($method, $url, $data = null, $audit = null, $verbose =
         $result = @file_get_contents($completeurl, null, $stream);
     }
 
-    if ($result) {
-        return json_decode($result, true);
-    }
+    $status_line = $http_response_header[0];
+    preg_match('{HTTP\/\S*\s(\d{3})}', $status_line, $match);
+    $status = $match[1];
 
-    if ($verbose) {
+    $success = ($status == "200" || $status == "204");
+
+    if ($verbose && !$success) {
         echo "mailChimpRequest failed, method:<b>$method</b> completeurl:<b>$completeurl</b> info:<b>$audit</b> data:<b>$json_data</b> http_response_header:<b>".json_encode($http_response_header)."</b> result:<b>".json_encode($result)."</b>";
     }
     
-    return false;
+    return ($success) ? json_decode($result, true) : false;
 }
 
 // creates and sends a campaign using the given list
@@ -46,35 +48,48 @@ function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
 {
     $config = new JConfig();
     $templates = mailChimpRequest("GET","templates?type=user",null,"mailChimpSend");
+    /* The free plan on mailchimp now only supprots one "audience"
+     * so we can't have multiple lists any more. But you can segment
+     * the audience using tags and then target a campaign at a particular segment
+     * For testsing, add the following to the "recipients" array to target
+     * only developers.
+     * TODO - migrate the sub-lists to tags
+     *
+     "segment_opts" => array(
+     	"saved_segment_id" => 627837
+     )
+     */
     $args = array(
         "type"    =>"regular",
-        "recipients" => array( "list_id" => $listid ),
+	"recipients" => array( 
+		"list_id" => $listid,
+       	),
         "settings" =>array(
             "subject_line"     => $subject,
             "reply_to"  => $config->mailchimp_mailfrom,
             "from_name"   => $from_name,
-            "template_id" => $templates['templates'][0]['id']
             )
         );
 
 
-    $campaign = mailChimpRequest("POST","campaigns",$args,"mailChimpSend");
+    $campaign = mailChimpRequest("POST","campaigns",$args,"mailChimpSend", true);
 
-    $content_args = array(
-        "template" => array(
-            "id" => $templates['templates'][0]['id'],
-            "sections" => Array("body" => $body)
-            )
-        );
+    $result = false;
 
-    $campaign = mailChimpRequest("PUT","campaigns/".$campaign['id']."/content",$args,"mailChimpSend");
-
-    if (!$campaign)
+    if ($campaign)
     {
-        return $campaign;
-    }
+	    $content_args = array(
+		"template" => array(
+		    "id" => $templates['templates'][0]['id'],
+		    "sections" => Array("body" => $body)
+		    )
+		);
 
-    return mailChimpRequest("POST","campaigns/".$campaign['id']."/actions/send",null,"mailChimpSend");
+	    mailChimpRequest("PUT","campaigns/".$campaign['id']."/content",$content_args,"mailChimpSend", true);
+
+	    $result = mailChimpRequest("POST","campaigns/".$campaign['id']."/actions/send",null,"mailChimpSend", true);
+    }
+    return $result;
 }
 
 // updates the 'Members' list from the ctc.phplist_listuser view
