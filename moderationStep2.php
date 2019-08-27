@@ -42,7 +42,7 @@ if ($listid != "") {
     $listname = $query[0]["listname"];
 }
 
-$subject   = $msg == null || $prevaction == "edit" ? $editedsubject : $msg->getHeader("Subject") ;
+$subject   = $msg == null || $prevaction == "edit" ? $editedsubject : "[CTC] ".$msg->getHeader("Subject") ;
 $body      = $msg == null || $prevaction == "edit" ? $editedbody    : $msg->getHtmlBody();
 $body      = preg_replace(ModerationConfig::BodyClearPattern,"",$body);
 $from      = $msg == null || $prevaction == "edit" ? $editedfrom    : $msg->getHeader("From");
