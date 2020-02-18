@@ -7,7 +7,8 @@ require_once( 'includes/mailchimp.inc.php' );
 
 echo gmdate('Y-m-d H:i:s')." MailChimpResetSubscription\n";
 
-mailChimpResetSubscription($con);
+mailChimpResetSubscription($con, "Members", "onEmailListBool");
+mailChimpResetSubscription($con, "TripLeaders", "onTripLeaderEmailListBool");
 
 echo gmdate('Y-m-d H:i:s')." MailChimpUpdateLists\n";
 

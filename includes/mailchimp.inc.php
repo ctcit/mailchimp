@@ -93,12 +93,13 @@ function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
     return $result;
 }
 
-// updates the 'Members' list from the ctc.phplist_listuser view
-function mailChimpResetSubscription($con)
+// updates the an email list in ctc.mailchimp_lists from
+// the ctc.memberships table
+function mailChimpResetSubscription($con, $listname = "Members", $onListVariable = "onEmailListBool")
 {
     mailChimpUpdateLists($con);
 
-    $lists = SqlResultArray($con,"SELECT listid FROM ctc.mailchimp_lists where listname = 'Members'");
+    $lists = SqlResultArray($con,"SELECT listid FROM ctc.mailchimp_lists where listname = '$listname'");
     $listid = $lists[0]["listid"];
 
     SqlExecOrDie($con,"DELETE from ctc.mailchimp_subscriptions where listid = '$listid'");
@@ -106,7 +107,7 @@ function mailChimpResetSubscription($con)
                  "SELECT '$listid', m.id ".
                  "from ctc.members m ".
                  "join ctc.memberships ms on ms.id = m.membershipid ".
-                 "where ms.statusAdmin='Active' and m.onEmailListBool ='Yes'");
+                 "where ms.statusAdmin='Active' and m.$onListVariable ='Yes'");
 }
 
 
