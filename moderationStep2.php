@@ -45,7 +45,15 @@ if ($listid != "") {
 $subject   = $msg == null || $prevaction == "edit" ? $editedsubject : "[CTC] ".$msg->getHeader("Subject") ;
 $body      = $msg == null || $prevaction == "edit" ? $editedbody    : $msg->getHtmlBody();
 $body      = preg_replace(ModerationConfig::BodyClearPattern,"",$body);
-$from      = $msg == null || $prevaction == "edit" ? $editedfrom    : $msg->getHeader("From");
+// $from      = $msg == null || $prevaction == "edit" ? $editedfrom    : $msg->getHeader("From");
+// Don't set the "From" field as who it's actually from. Unfortunately mail-chimp
+// doesn't let you specify a different "reply-to" address, and the "From" address has to be a validated address
+// (ege webmaster@ctc.org.nz). This causes no end of confusion with people reply directly to the emails
+// thinking they are emailing the person who the email says it is from. Worse, webmaster@ctc.org.nz often
+// gets ssaved to people's address books under the name of someone who sent a club email, resulting in the
+// webmaster receiving personal emails. Instead just default to "Christchurch Tramping Club"
+// This can of course be over-ridden in the editor
+$from      = $msg == null || $prevaction == "edit" ? $editedfrom    : "Christchurch Tramping Club";
 
 if ($action == "list") {
     $captionimg = $captionweb = "List the emails";
