@@ -21,7 +21,7 @@ function GetHtmlFromMessage($msg) {
 }
 
 function SendModerationEmail($recipient, $subject, $body) {
-    $sender = ModerationConfig::SrcName."@".ModerationConfig::SrcDomain;
+    $sender = ModerationConfig::ModerationEmailFrom."@".ModerationConfig::SrcDomain;
     # Invoke JMail Class
     $mailer = JFactory::getMailer();
 
