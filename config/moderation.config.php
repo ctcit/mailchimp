@@ -1,10 +1,10 @@
 <?php
 class ModerationConfig
 {
-    const SrcName = "members-test";
     // The username the moderation email should be sent from (will be @SrcDomain)
     // Do NOT set this to SrcName as that can cause an avalanche of emails if there is a bounce!
     const ModerationEmailFrom = "webmaster";
+    const SrcName = "members";
     const SrcDomain = "ctc.org.nz";
     const MailRoot = "/var/mail/"; // Need better way to define this
     const Unmoderated = "/.Unmoderated";
