@@ -1,6 +1,8 @@
 <?php
 
-define('JPATH_BASE', dirname(dirname(__DIR__)));// Assume mailchimp at top level in website
+if (!defined('JPATH_BASE')) {
+    define('JPATH_BASE', dirname(dirname(__DIR__)));// Assume mailchimp at top level in website
+}
 require_once ( JPATH_BASE.'/configuration.php' );
 
 function mailChimpRequest($method, $url, $data = null, $audit = null, $verbose = false)
@@ -93,7 +95,7 @@ function mailChimpSend($listid,$subject,$body,$from_name,$to_name)
     return $result;
 }
 
-// updates the 'Members' list from the ctc.phplist_listuser view
+// updates the 'Members' list from the ctc.members and ctc.memberships tables
 function mailChimpResetSubscription($con)
 {
     mailChimpUpdateLists($con);
@@ -191,10 +193,13 @@ function mailChimpUpdateListFromDB($con,$listid)
                 $members[$key]["Create"] = "";
                 $members[$key]["Update"] = "";
                 $members[$key]["Subscribe"] = $status == "subscribed" ? "unsubscribed" : "";
-            } else  {
+            } else {
                 $members[$key]["Create"] = "";
                 $members[$key]["Update"] = $members[$key]["FNAME"] == $fname && $members[$key]["LNAME"] == $lname ? "" : "Update";
-                $members[$key]["Subscribe"] = ($status == "subscribed" || $status == "pending") ? "" : "pending";
+                // I'm not exactly sure what the intent was here. Possible statuses are:
+                // "subscribed", "unsubscribed", "cleaned", "pending", or "transactional"
+                // We don't want to re-seibscribe someone who unsubscribed, or who was cleaned
+                #$members[$key]["Subscribe"] = ($status == "subscribed" || $status == "pending") ? "" : "pending";
             }
 
             $members[$key]["id"] = $id;
@@ -208,7 +213,6 @@ function mailChimpUpdateListFromDB($con,$listid)
 
     // Generate subscribe or unsubscribe actions as necessary
     foreach ($members as $member) {
-        $memberid = $member["id"];
 
         $changed []= $member;
 
@@ -225,6 +229,7 @@ function mailChimpUpdateListFromDB($con,$listid)
         }
 
         if ($member["Update"] != "") {
+            $memberid = $member["id"];
             $email = $member["email_address"];
             $fname = $member["FNAME"];
             $lname = $member["LNAME"];
@@ -235,10 +240,15 @@ function mailChimpUpdateListFromDB($con,$listid)
         }
 
         if ($member["Subscribe"] != "") {
+            $memberid = $member["id"];
             $email = $member["email_address"];
             $fname = $member["FNAME"];
             $lname = $member["LNAME"];
             $audit = $member["Subscribe"]." $email $fname $lname";
+            if (!array_key_exists("FNAME",$member)) {
+                echo "Member has no FNAME";
+                print_r($member);
+            }
             $data = array("status" => $member["Subscribe"]);
             $changed []= $audit;
             $changed []= mailChimpRequest("PATCH", "lists/$listid/members/$memberid",$data,$audit);
