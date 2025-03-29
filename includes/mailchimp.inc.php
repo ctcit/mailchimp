@@ -211,6 +211,11 @@ function mailChimpUpdateListFromDB($con,$listid)
     foreach ($members as $member) {
         $memberid = $member["id"];
 
+        if (!array_key_exists("id",$member)) {
+            echo "Member has no id";
+            print_r($member);
+            continue;
+        }
         $changed []= $member;
 
         if ($member["Create"] != "") {
