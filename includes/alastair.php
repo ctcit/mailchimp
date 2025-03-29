@@ -1,6 +1,10 @@
 <?php
-define('_JEXEC', 1);
-define('JPATH_BASE', dirname(dirname(__DIR__)));// Assume mailchimp at top level in website
+if (!defined('_JEXEC')) {
+    define('_JEXEC', 1);
+}
+if (!defined('JPATH_BASE')) {
+    define('JPATH_BASE', dirname(dirname(__DIR__)));// Assume mailchimp at top level in website
+}
 require_once ( JPATH_BASE.'/includes/defines.php' );
 require_once ( JPATH_BASE.'/includes/framework.php' );
 
