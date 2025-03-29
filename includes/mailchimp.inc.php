@@ -119,7 +119,7 @@ function mailChimpUpdateLists($con)
     $lists = mailChimpRequest("GET","lists?fields=lists.id,lists.name",null,"mailChimpUpdateLists");
     $listids = array();
 
-    foreach ($lists['data'] as &$list) {
+    foreach ($lists['lists'] as &$list) {
         $id = $list['id'];
         $name = SqlVal($list['name']);
         $listids []= "'$id'";
@@ -176,7 +176,7 @@ function mailChimpUpdateListFromDB($con,$listid)
     $changed []= "listname='$listname' listid='$listid' sql returned ".count($members)." items";
 
     // Get the current state from MailChimp
-    for ($offset = 1, $count = 10; ; $offset += $count)	{
+    for ($offset = 0, $count = 10; ; $offset += $count)	{
         $geturl = "lists/$listid/members?fields=members.id,members.status,members.email_address,members.merge_fields&count=$count&offset=$offset";
         $mailchimpmembers = mailChimpRequest("GET", $geturl, null, "mailChimpUpdateListFromDB get members");
         $changed []= "$geturl returned ".count($mailchimpmembers["members"])." items";
@@ -190,9 +190,11 @@ function mailChimpUpdateListFromDB($con,$listid)
             $key = strtoupper($email);
 
             if (!array_key_exists($key,$members)) {
-                $members[$key] = array("email"=>$email);
+                $members[$key] = array("email_address"=>$email);
                 $members[$key]["Create"] = "";
                 $members[$key]["Update"] = "";
+                $members[$key]["FNAME"] = $fname;
+                $members[$key]["LNAME"] = $lname;
                 $members[$key]["Subscribe"] = $status == "subscribed" ? "unsubscribed" : "";
             } else {
                 $members[$key]["Create"] = "";
@@ -215,11 +217,6 @@ function mailChimpUpdateListFromDB($con,$listid)
     // Generate subscribe or unsubscribe actions as necessary
     foreach ($members as $member) {
 
-        if (!array_key_exists("id",$member)) {
-            echo "Member has no id";
-            print_r($member);
-            continue;
-        }
         $changed []= $member;
 
         if ($member["Create"] != "") {
